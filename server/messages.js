@@ -54,8 +54,5 @@ export default {
 	33(sock){
 		if(sock.ping < 65536)return
 		sock.ping = Date.now() - sock.ping
-	},
-	255(sock, view){
-		console.log('pong',new Uint8Array(view.buffer).reduce((a,b)=>a+b))
 	}
 }

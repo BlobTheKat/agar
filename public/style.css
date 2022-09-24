@@ -110,6 +110,7 @@ input:focus{
 	color: #777;
 	font-size: 14px;
 }
+a{color: #666}
 #overlay{
 	position: absolute;
 	top: 0;

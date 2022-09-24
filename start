@@ -1,7 +1,11 @@
-cd public
-npx live-server --port=80 >> /dev/null &
-A=$!
-cd ../server
+a(){
+	cd public
+	npx live-server --port=$1 >> /dev/null &
+	A=$!
+	cd ..
+}
+[ -z "$1" ] || a $1
+cd server
 [ ! -d "node_modules" ] && npm i
 node .
-kill $A
+[ -z "$A" ] || kill $A

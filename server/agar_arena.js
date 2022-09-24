@@ -99,5 +99,7 @@ setInterval(function tick(){
 	}
 }, 23)
 export const sockets = new Set
+export const bans = new Set
 export {default as messages} from './messages.js'
 export { PlayerSocket } from './socket.js'
+export * as cmds from './cli.js'

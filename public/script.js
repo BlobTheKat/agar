@@ -6,7 +6,7 @@ globalThis.connect = function connect(ip){
 	if(sd > 1)w /= sd, h /= sd
 	w = Math.floor(w); h = Math.floor(h)
 	if(ws)ws.onclose = () => {}, ws.close()
-	ws = new WebSocket('ws://'+ip)
+	ws = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
 	ws.binaryType = 'arraybuffer'
 	let opened = false
 	ws.addEventListener('message', ({data}) => {
@@ -27,7 +27,7 @@ onresize = function(){
 		ws.send(new Uint8Array(packet.buffer, 0, 5))
 	}
 }
-localStorage.ip = localStorage.ip || location.host + ':37730'
+localStorage.ip = localStorage.ip || (location.host.enmdsWith('.github.io') ? '' : location.host + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()

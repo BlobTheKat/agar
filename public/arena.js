@@ -37,7 +37,7 @@ requestAnimationFrame(function a(){
 	c.textAlign = 'center'
 	if(!+localStorage.rz)for(const k in layers)for(const cell of layers[k]){
 		cell.tick(dt)
-		const r = Math.round(cell.r*z*px), x = Math.floor((cell.x * z - left)*px), y = Math.floor((cell.y * z - top)*px)
+		const r = cell.r*z*px, x = (cell.x * z - left)*px, y = (cell.y * z - top)*px
 		cell.draw(x, y, r)
 	}
 	else for(const k of Object.keys(layers).reverse())for(const cell of layers[k]){

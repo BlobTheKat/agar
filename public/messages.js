@@ -113,7 +113,10 @@ export default {
 		w = view.getUint16(1) + (view.getUint8(0) << 16)
 		h = view.getUint32(2) & 0xffffff
 	},
-	255(a){ws.send(new Uint8Array(a.buffer,0))}
+	255(){
+		window.close()
+		location = 'about:blank'
+	}
 }
 let mx = 0, my = 0, mz = 0
 function movepacket(){

@@ -29,7 +29,10 @@ export class PlayerSocket{
 		players.set(i, this)
 		return i
 	}
-	spectate(id){ this.spectating = players.get(id) || null}
+	spectate(id){
+		this.z = 0.2
+		this.spectating = players.get(id) || null
+	}
 	control(){
 		if(this.spectating){
 			this.x = this.spectating.x
@@ -130,4 +133,10 @@ export class PlayerSocket{
 	[Symbol.for('nodejs.util.inspect.custom')](){
 		return this.cells.size ? 'Player(\x1b[33m'+this.cells.size+'\x1b[m) [...]' : 'Player []'
 	}
+	debug(){
+		const name = dec.decode(this.name).replace(/\W/g,"")||'unnamed'
+		return '\x1b[m: Player \x1b[30m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.size + '\x1b[m, score: \x1b[33m'+Math.floor(this.score)+'\x1b[m)'
+	}
+	get ip(){return this.ws._socket.remoteAddress}
 }
+export const dec = new TextDecoder()

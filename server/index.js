@@ -5,9 +5,10 @@ import {promises as fs} from 'fs'
 import { packet } from './util.js';
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
 ;(async()=>{for await(const _ of fs.watch('../config.yaml'))Object.assign(globalThis.CONFIG, YAML.parse(''+await fs.readFile('../config.yaml')))})()
-const { sockets, arena, messages, PlayerSocket } = await import('./agar_arena.js')
+const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
 const wss = new WebSocketServer({port: CONFIG.port || 37730})
 wss.on('connection', (ws, {url}) => {
+	if(bans.has(ws._socket.remoteAddress))return ws.close()
 	let [w, h] = url.slice(1).split('/')
 	w = Math.min(2000, +w || 640); h = Math.min(1125, +h || 360)
 	const sock = new PlayerSocket(ws, arena)
@@ -36,8 +37,19 @@ function message(msg){
 	const fn = messages[msg[0]]
 	if(fn)try{fn(this.sock, d)}catch{}
 }
-repl('(server) ', cmd => '')
-repl('$ ', cmd => {console.log(eval(cmd))})
+repl('(server) ', cmd => {
+	cmd = cmd.trim()
+	if(!cmd)return
+	const args = cmd.match(/\S+|"([^"]|\\.)"/g)
+	const fn = cmds[args[0]]
+	if(!fn)return console.log('\x1b[31mNo such command: '+args[0]+'\x1b[m')
+	let r
+	try{r = fn.call(...args)}catch(e){return console.log('\x1b[31m' + e + '\x1b[m')}
+	if(Array.isArray(r))for(const v of r)console.log(v)
+	else if(r !== undefined)console.log(r)
+
+})
+repl('$ ', cmd => console.log(eval(cmd)))
 function test(){
 	let a = new Uint8Array(100000)
 	const s = [...sockets][0]
