@@ -27,7 +27,7 @@ onresize = function(){
 		ws.send(new Uint8Array(packet.buffer, 0, 5))
 	}
 }
-localStorage.ip = localStorage.ip || (location.host.enmdsWith('.github.io') ? '' : location.host + ':37730')
+localStorage.ip = localStorage.ip || (location.host.endsWith('.github.io') ? '' : location.host + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()
