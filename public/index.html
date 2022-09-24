@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="./style.css">
+		<title>blob.io</title>
+	</head>
+	<body>
+		<canvas id="arena"></canvas>
+		<div id="leaderboard">
+			Leaderboard
+			<div></div><div></div><div></div><div></div><div></div>
+			<div></div><div></div><div></div><div></div><div></div>
+			<div></div>
+		</div>
+		<div id="minimap">
+
+		</div>
+		<div id="myscore">
+			<span>Score: 0</span>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div id="overlay">
+			<div id="sel">
+				<h1 id="title">Blob.io</h1>
+				<div class="btns">
+					<input key="nick" placeholder="nickname" maxlength="16" /><input key="ip" placeholder="ip" value="localhost:37730" onchange="connect(this.value)" />
+				</div>
+				<div class="btns"><btn id="spec" onclick="spectating=65536;play()">Spectate</btn><btn id="play" onclick="spectating=0;t.i=1;play()">Play</btn><btn id="pref" onclick="sel.classList.toggle('pref')">&#xe019;</btn></div>
+				<div class="pref">
+					<input type="checkbox" key="nn"> No names
+					<input type="checkbox" key="ns"> No skins
+					<input type="checkbox" key="nc"> No colors<br>
+					<input type="checkbox" key="dt" onchange="if(arena.style.background)arena.style.background=this.checked?'#111':'#fff';arena.classList[this.checked?'add':'remove']('dark');arena.width++"> Dark theme
+					<input type="checkbox" key="sm"> Show mass
+					<input type="checkbox" key="hm" onchange="minimap.style.display=this.checked?'none':''"> Hide minimap<br>
+					<input type="checkbox" key="hg" onchange="arena.style.background=this.checked?+localStorage.dt?'#111':'#fff':'';arena.width++"> Hide grid
+					<input type="checkbox" key="hl" onchange="leaderboard.style.display=this.checked?'none':''"> Hide leaderboard
+					<input type="checkbox" key="hs" onchange="myscore.style.display=this.checked?'none':''"> Hide stats<br>
+					<input type="checkbox" key="lr"> Lower resolution
+					<input type="checkbox" key="nj"> No shapes<br>
+					<div style="width:100%;text-align:center;color:#aaa;font-weight:bold;font-size:20px">-- For fun --</div>
+					<input type="checkbox" key="ec"> Ecstasy
+					<input type="checkbox" key="rz"> Reversed z index
+					<input type="checkbox" key="ss"> Static skins<br>
+					<input type="checkbox" key="lc"> Lock camera
+					<input type="checkbox" key="pg"> Parallax grid
+					<input type="checkbox" key="sj"> Static shapes
+				</div>
+				<div id="help">
+					Move your <b>Mouse</b> to control your cell<br>
+					Press <b>Space</b> to split<br>
+					Press <b>W</b> to eject mass<br>
+					<!--b>Eat other cells</b> to grow<br-->
+				</div>
+				<hr>
+				<div id="info">
+					Work in progress!
+				</div>
+			</div>
+		</div>
+		<script src="./script.js" type="module"></script>
+	</body>
+</html>

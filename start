@@ -1,0 +1,7 @@
+cd public
+npx live-server --port=80 >> /dev/null &
+A=$!
+cd ../server
+[ ! -d "node_modules" ] && npm i
+node .
+kill $A
