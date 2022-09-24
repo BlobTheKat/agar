@@ -53,7 +53,7 @@ export default {
 			i += 18
 		}
 	},
-	1(){ overlay.classList.add('hidden') },
+	1(){ overlay.classList.add('hidden'); document.activeElement.blur() },
 	2(){ overlay.classList.remove('hidden') },
 	3(view){
 		let i = 0

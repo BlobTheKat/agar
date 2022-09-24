@@ -1,6 +1,8 @@
 import messages from "./messages.js"
 globalThis.ws = null
+let t = -1
 globalThis.connect = function connect(ip){
+	clearTimeout(t)
 	let w = innerWidth, h = innerHeight
 	let sd = Math.max(w / 2000, h / 1125)
 	if(sd > 1)w /= sd, h /= sd
@@ -16,7 +18,7 @@ globalThis.connect = function connect(ip){
 		const fn = messages[code]
 		if(fn)fn(view)
 	})
-	ws.onclose = () => opened ? location.reload() : 0
+	ws.onclose = () => opened ? location.reload() : t = setTimeout(() => connect(ip), 10000)
 	ws.onopen = onresize
 }
 onresize = function(){
@@ -27,7 +29,7 @@ onresize = function(){
 		ws.send(new Uint8Array(packet.buffer, 0, 5))
 	}
 }
-localStorage.ip = localStorage.ip || (location.host.endsWith('.github.io') ? '' : location.host + ':37730')
+localStorage.ip = localStorage.ip || (location.host.endsWith('.github.io') || location.host.endsWith('.chit.cf') ? '' : location.host + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()
