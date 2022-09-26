@@ -43,16 +43,17 @@ globalThis.play = function(){
 	ws.send(new Uint8Array(packet.buffer, 0, i))
 }
 onkeydown = function(e){
-	if(e.key == ' ' && ws && !e.repeat){
+	const key = e.key.toLowerCase()
+	if(key == ' ' && ws && !e.repeat){
 		packet.setUint8(0, 16)
 		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(e.key == 'w' && ws){
+	}else if(key == 'w' && ws){
 		packet.setUint8(0, 17)
 		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(e.key == 'z' && ws){
+	}else if(key == 'z' && ws){
 		packet.setUint8(0, 18)
 		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(e.key == 'Escape'){
+	}else if(key == 'escape'){
 		overlay.classList.remove('hidden')
 		packet.setUint8(0, 0)
 		packet.setInt32(1, 0)

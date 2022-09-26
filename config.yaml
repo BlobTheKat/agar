@@ -22,7 +22,7 @@ zoomlimit: 1 #values > 1 allow zooming out more than the automatic zoom
 food:
   min: 5000 #amount of food that will be spawned
   max: 10000 #amount of food not allowed to be more than this
-  spawn: 100 #how much food spawned per tick
+  spawn: 25 #how much food spawned per tick
   #mass chosen randomly between the two
   minmass: 2
   maxmass: 2
@@ -61,7 +61,7 @@ eject:
   mass: 20
   efficiency: 0.9
   cooldown: 10
-  randomthrow: 0 #how much to randomize ejection direction
+  randomthrow: 10 #how much to randomize ejection direction
   speed: 17
   max: 1000
   gun: 1 #controls how much the z key ejects at a time. Set this to something high and have fun! not recommended for public servers

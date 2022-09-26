@@ -144,4 +144,5 @@ arena.addEventListener('wheel', function(e){
 	packet.setInt16(3, my)
 	packet.setInt16(5, mz = e.deltaY)
 	ws.send(new Uint8Array(packet.buffer, 0, 7))
-})
+	e.preventDefault()
+}, {passive:false})

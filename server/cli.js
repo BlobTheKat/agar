@@ -34,6 +34,10 @@ export function kill(p){
 	}
 	return '\x1b[32mKilled them!\x1b[m'
 }
+export function killall(){
+	for(const s of sockets)for(const cell of s.cells)arena.remove(cell)
+	return '\x1b[32mKilled all players!\x1b[m'
+}
 export function feed(p, m){
 	m -= 0
 	if(!m)throw 'Invalid mass'
@@ -64,4 +68,5 @@ merge \x1b[34m<player> \x1b[30m-- Allow a player's cells to merge\x1b[m
 kick \x1b[34m<player> \x1b[30m-- Kick a player from the game\x1b[m
 ban \x1b[34m<player> \x1b[30m-- Ban a player's IP from the game\x1b[m
 pardon \x1b[36m<ip> \x1b[30m-- Revoke an IP ban\x1b[m
+killall \x1b[30m-- Kill all players' cells\x1b[m
 \x1b[30mhelp -- `+['???','help','take a wild guess','lol','this duh','unhelpful command','Unlocked at level 30','nani?!'][Math.floor(Math.random()*8)]

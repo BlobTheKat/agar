@@ -17,7 +17,7 @@ export class Virus extends Cell{
 		if(cell instanceof PlayerCell){
 			const m = cell.m * 0.2
 			let mass = m
-			cell.age = 0
+			cell.age = 20
 			while(true){
 				if(cell.m - mass < playerminmass)break
 				const c = cell.sock.newcell(cell.x, cell.y, mass)

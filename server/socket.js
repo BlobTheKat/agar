@@ -31,6 +31,7 @@ export class PlayerSocket{
 	}
 	spectate(id){
 		this.z = 0.2
+		this.mz = 1
 		this.spectating = players.get(id) || null
 	}
 	control(){
@@ -135,7 +136,7 @@ export class PlayerSocket{
 	}
 	debug(){
 		const name = dec.decode(this.name).replace(/\W/g,"")||'unnamed'
-		return '\x1b[m: Player \x1b[30m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.size + '\x1b[m, score: \x1b[33m'+Math.floor(this.score)+'\x1b[m)'
+		return '\x1b[32m' + this.id + '\x1b[m: Player \x1b[90m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.size + '\x1b[m, score: \x1b[33m'+Math.floor(this.score)+'\x1b[m)'
 	}
 	get ip(){return this.ws._socket.remoteAddress}
 }
