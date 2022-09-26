@@ -1,0 +1,67 @@
+#everything after a # is a comment and does nothing if you change / remove it
+
+#Measurements:
+#size / length: 50 = 1 grid space
+#time: 40 ticks = 1 second
+#mass: a cell 10 grid spaces wide has a mass of 625; 20 grid spaces wide = 2500; 40 grid spaces = 10000
+#mass formula: mass = radius * radius / 100
+
+
+# basic config
+width: 14142
+height: 14142
+friction: 0.02 #0.02 => velocity *= 0.98 every tick
+eatratio: 1.3 #one cell must be 30% bigger than another to eat it
+
+#server config
+port: 37730
+maxplayers: 128
+celltimeout: 60 #delay before deleting cells from disconnected players
+zoomlimit: 4 #values > 1 allow zooming out more than the automatic zoom
+
+food:
+  min: 5000 #amount of food that will be spawned
+  max: 10000 #amount of food not allowed to be more than this
+  spawn: 25 #how much food spawned per tick
+  #mass chosen randomly between the two
+  minmass: 2
+  maxmass: 2
+
+virus:
+  min: 50
+  max: 100
+  spawn: 1 #how many viruses spawned per tick
+  #mass chosen randomly between the two
+  minmass: 100
+  maxmass: 100
+  grow: true #whether to grow & split or be pushed when fed
+  splitmass: 200 #mass at which virus splits apart in 2
+
+mothervirus:
+  ratio: 0.2 #fraction of viruses that are replaced with motherviruses
+  #mass starts as min and cannot go above max
+  minmass: 200
+  maxmass: 20000 #not vanilla but used as a safeguard anyway
+  foodspawn: 2 #food spawned per tick
+  foodmass: 3
+  efficiency: 1 #1 mass in returns how much mass out
+
+player:
+  maxcells: 32
+  startmass: 20
+  minmass: 18 #splitting or ejecting cannot make you smaller than this
+  maxmass: 225000
+  mergetime: 200 #30s
+  speed: 55
+  speedexponent: 0.239 #how much your speed slows down as you grow. If you find big cells are too slow, decrease this
+  massdecay: 0.002 #fraction of a player's mass that he loses per second
+
+eject:
+  solid: false #oddly enough true _reduces_ lag
+  mass: 20
+  efficiency: 2.9
+  cooldown: 0
+  randomthrow: 10 #how much to randomize ejection direction
+  speed: 17
+  max: 2000
+  gun: 10 #controls how much the z key ejects at a time. Set this to something high and have fun! not recommended for public servers

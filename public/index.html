@@ -28,7 +28,7 @@
 			<div id="sel">
 				<h1 id="title">Agar.io</h1>
 				<div class="btns">
-					<input key="nick" placeholder="nickname" maxlength="16" /><input key="ip" placeholder="ip" onchange="connect(this.value)" />
+					<input key="nick" placeholder="nickname" maxlength="16" onkeypress="if(event.keyCode==13)spectating=0,play()"/><input key="ip" placeholder="ip" onchange="connect(this.value)" />
 				</div>
 				<div class="btns"><btn id="spec" onclick="spectating=65536;play()">Spectate</btn><btn id="play" onclick="spectating=0;play()">Play</btn><btn id="pref" onclick="sel.classList.toggle('pref')">&#xe019;</btn></div>
 				<div class="pref">

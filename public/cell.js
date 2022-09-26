@@ -34,10 +34,10 @@ export class Cell{
 		if(this.points){
 			let d = this.points.length - (staticshapes ? (r / 3) << 1 : Math.min(this.r / 3, r) << 1)
 			if(d>0)while(d--)this.points.pop()
-			else while(d++)this.points.push(0)
+			else while(d++)this.points.push(this.points[0] || 0)
 		}
 		c.beginPath()
-		if(r < 20 || noshapes){ c.arc(x, y, r, 0, PI2) }
+		if(r < 10 * px || noshapes){ c.arc(x, y, r, 0, PI2) }
 		else switch(kind){
 			case 0: circle(x, y, r); break
 			case 1: jelly(x, y, r, this, true); break
