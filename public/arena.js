@@ -1,8 +1,8 @@
 import {layers} from './messages.js'
-globalThis.x = 0
-globalThis.y = 0
-globalThis.z = 0.5
-globalThis.t = {x: 0, y: 0, z: 1, i: 1}
+export let x = 0
+export let y = 0
+export let z = 0.5
+export let t = {x: 0, y: 0, z: 1}
 let last = Date.now()
 export const c = arena.getContext('2d')
 let fps = 45
@@ -19,6 +19,7 @@ requestAnimationFrame(function a(){
 	x0 = w - max/2; y0 = h - max/2
 	const dt = Math.min(.05, (Date.now() - last) / 1000)
 	fps += (1 / dt - fps) / 10
+	if(!fps)fps = 1
 	myscore.children[3].textContent = 'FPS: '+Math.round(fps)
 	last = Date.now()
 	if(!+localStorage.lc){
@@ -32,9 +33,10 @@ requestAnimationFrame(function a(){
 		arena.width = Math.round(innerWidth * px)
 		arena.height = Math.round(innerHeight * px)
 	}
-	c.lineWidth = staticshapes ? Math.round(5 * px) : Math.round(px * z * 8)
+	c.lineWidth = staticshapes ? Math.round(5 * px) : Math.min(Math.round(px * z * 8), Math.round(15 * px))
 	c.textBaseline = 'middle'
 	c.textAlign = 'center'
+	c.lineJoin = 'miter'
 	if(!+localStorage.rz)for(const k in layers)for(const cell of layers[k]){
 		cell.tick(dt)
 		const r = cell.r*z*px, x = (cell.x * z - left)*px, y = (cell.y * z - top)*px

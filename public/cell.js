@@ -1,5 +1,5 @@
-import { showcol, showmass, shownames, showskins, staticskins, noshapes, c, x0, y0, max, px } from "./arena.js"
-import { circle, jagged } from "./jelly.js"
+import { showcol, showmass, shownames, showskins, staticskins, staticshapes, noshapes, c, x0, y0, max, px, z } from "./arena.js"
+import { circle, jagged, jelly } from "./jelly.js"
 const skins = new Set('2ch.hk,facebook,pokerface,4chan,facepunch,poland,8,feminism,portugal,8ch,fidel,prodota,9gag,finland,prussia,cia,firework,putin,acorn,fly,qing dynasty,aer,fox,quebec,alien x,france,queen,apple,french kingdom,raptor,apple_,german empire,receita federal,argentina,germany,reddit,army,greece,rockstar n,astronaut,hellcat,rockstar s,australia,hillary,romania,austria,hollande,russia,ayy lmao,hong kong,sanik,bait,hungary,satanist,bangladesh,hunter,scotland,basketball,imperial japan,sealand,basketball_,india,shark,bat,indiana,sir,bear,indonesia,snake,belgium,iran,somalia,berlusconi,iraq,south korea,birthday troll,ireland,spain,blatter,irs,spider,blob,italy,spitfire,boris,jamaica,stalin,bosnia,japan,stars,botswana,kc,steam,brazil,kim jong-un,stussy,bulgaria,kraken,sumo,bush,latvia,sweden,byzantium,lion,switzerland,cambodia,lithuania,t rex,cameron,lizard,taiwan,cat,luxembourg,texas,cell,maldives,thailand,chaplin,mammoth,tiger,chavez,mars,trump,chile,matriarchy,tsarist russia,china,mercury,tsipras,chrome,merkel,tumblr,clinton,mexico,turkey,confederate,moon,ugandan knuckles,cougar,nasa,ukraine,coyote,netherlands,uncle_sam,creeper,nigeria,united kingdom,croatia,north korea,uranus,crocodile,norway,usa,denmark,nuclear,ussr,dilma,obama,venezuela,doge,origin,venus,dragon,owo,vinesauce,ea,pakistan,wasp,earth day,palin,wicked_cat,earth,panther,wojak,estonia,patriarchy,wolf,european union,peru,yaranaika,evil,piccolo,zebra'.split(','))
 const patterns = {clear: null}
 for(const skin of skins){
@@ -15,7 +15,6 @@ for(let r = 0; r < 16; r++)
 		for(let b = 0; b < 16; b++)
 		colors.push('#' + hex[r + 1] + hex[g + 1] + hex[b + 1]),
 		darkcolors.push('#' + hex[r] + hex[g] + hex[b])
-
 export class Cell{
 	x = 0
 	y = 0
@@ -24,6 +23,7 @@ export class Cell{
 	kind = 0
 	name = ''
 	id = 0
+	points = null
 	tick(dt){
 		this.x += (this.tx - this.x) * dt * 20; this.y += (this.ty - this.y) * dt * 20
 		this.r *= (this.tr / this.r) ** (dt * 6)
@@ -31,12 +31,17 @@ export class Cell{
 	}
 	draw(x, y, r){
 		const kind = this.kind >> 12
+		if(this.points){
+			let d = this.points.length - (staticshapes ? (r / 3) << 1 : Math.min(this.r / 3, r) << 1)
+			if(d>0)while(d--)this.points.pop()
+			else while(d++)this.points.push(0)
+		}
 		c.beginPath()
 		if(r < 20 || noshapes){ c.arc(x, y, r, 0, PI2) }
 		else switch(kind){
 			case 0: circle(x, y, r); break
-			case 1: jagged(x, y, r, this); break
-			case 2: circle(x, y, r); break
+			case 1: jelly(x, y, r, this, true); break
+			case 2: jelly(x, y, r, this, false); break
 			case 3: circle(x, y, r); break
 		}
 		const pattern = showskins ? patterns[this.name.toLowerCase()] : undefined
@@ -69,7 +74,7 @@ export class Cell{
 			mo = 1.4
 		}
 		if(this.r > 40 && showmass && kind == 2){
-			const t = '' + Math.ceil(this.r * this.r / 100)
+			const t = '' + Math.floor(this.r * this.r / 100)
 			const font = Math.max(25 * px * z, r >> 2)
 			c.font = font + 'px agar'
 			c.fillStyle = colors[4095]

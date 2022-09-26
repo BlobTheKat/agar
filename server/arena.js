@@ -128,8 +128,8 @@ export class Arena{
 			cell.y += cell.dy
 			cell.dx *= 1 - CONFIG.friction
 			cell.dy *= 1 - CONFIG.friction
-			if(abs(cell.dx) < 0.001)cell.dx = 0
-			if(abs(cell.dy) < 0.001)cell.dy = 0
+			if(abs(cell.dx) < 0.01)cell.dx = 0
+			if(abs(cell.dy) < 0.01)cell.dy = 0
 			for(const cell2 of this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r)){
 				if(cell2 == cell)continue
 				const dx = cell2.x - cell.x, dy = cell2.y - cell.y

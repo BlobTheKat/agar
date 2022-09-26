@@ -1,9 +1,10 @@
+import { t, x, y, z } from "./arena.js"
 import { Cell } from "./cell.js"
 let id = 0
 const txt = new TextDecoder()
 const players = new Map
 const minimapNodes = new Map
-let w = 14142, h = 14142
+export let w = 14142, h = 14142
 const cells = new Map
 export const layers = {}
 export let ping = 0
@@ -13,7 +14,6 @@ export default {
 		t.x = view.getUint32(2) << 8 >> 8
 		t.y = view.getUint32(5) << 8 >> 8
 		t.z = Math.exp((view.getUint32(8) & 0xffffff) / 1e6 - 10)
-		if(t.i)t.i--,{x,y,z} = t
 		if(!!+localStorage.lc)movepacket()
 		while(l--){
 			const cid = view.getUint32(i) + view.getUint8(i + 4) * 4294967296
@@ -39,6 +39,8 @@ export default {
 			cell.ty = y
 			cell.tr = r
 			cell.kind = kind
+			if(kind == 0)cell.points = null
+			else if(!cell.points)cell.points = []
 			cell.name = name
 			;(layers[r] || (layers[r] = new Set)).add(cell)
 			if(nid == id && id){

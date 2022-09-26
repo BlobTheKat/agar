@@ -1,6 +1,7 @@
 import messages from "./messages.js"
 globalThis.ws = null
 let t = -1
+let autoplay = false
 globalThis.connect = function connect(ip){
 	clearTimeout(t)
 	let w = innerWidth, h = innerHeight
@@ -8,7 +9,7 @@ globalThis.connect = function connect(ip){
 	if(sd > 1)w /= sd, h /= sd
 	w = Math.floor(w); h = Math.floor(h)
 	if(ws)ws.onclose = () => {}, ws.close()
-	ws = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
+	ws = new WS(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
 	ws.binaryType = 'arraybuffer'
 	let opened = false
 	ws.addEventListener('message', ({data}) => {
@@ -18,10 +19,11 @@ globalThis.connect = function connect(ip){
 		const fn = messages[code]
 		if(fn)fn(view)
 	})
-	ws.onclose = () => opened ? location.reload() : t = setTimeout(() => connect(ip), 10000)
+	ws.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
 	ws.onopen = onresize
 }
 onresize = function(){
+	if(autoplay)play()
 	if(ws){
 		packet.setUint8(0, 32)
 		packet.setUint16(1, innerWidth)
@@ -35,7 +37,10 @@ globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()
 globalThis.spectating = 0
 globalThis.play = function(){
-	if(!ws)return
+	if(!ws){
+		autoplay = true
+		connect(localStorage.ip)
+	}
 	packet.setUint8(0, spectating ? 2 : 1)
 	let i = 1
 	if(spectating)packet.setUint16(1, spectating), i += 2

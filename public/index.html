@@ -30,7 +30,7 @@
 				<div class="btns">
 					<input key="nick" placeholder="nickname" maxlength="16" /><input key="ip" placeholder="ip" onchange="connect(this.value)" />
 				</div>
-				<div class="btns"><btn id="spec" onclick="spectating=65536;play()">Spectate</btn><btn id="play" onclick="spectating=0;t.i=1;play()">Play</btn><btn id="pref" onclick="sel.classList.toggle('pref')">&#xe019;</btn></div>
+				<div class="btns"><btn id="spec" onclick="spectating=65536;play()">Spectate</btn><btn id="play" onclick="spectating=0;play()">Play</btn><btn id="pref" onclick="sel.classList.toggle('pref')">&#xe019;</btn></div>
 				<div class="pref">
 					<input type="checkbox" key="nn"> No names
 					<input type="checkbox" key="ns"> No skins
@@ -62,6 +62,7 @@
 				</div>
 			</div>
 		</div>
+		<script>WS=WebSocket;delete WebSocket</script>
 		<script src="./script.js" type="module"></script>
 	</body>
 </html>
