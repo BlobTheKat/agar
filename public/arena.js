@@ -7,6 +7,7 @@ let last = Date.now()
 export const c = arena.getContext('2d')
 let fps = 45
 requestAnimationFrame(function a(){
+	sel.style.transform = 'translateY(-50%) scale(' + (innerWidth < 400 ? (innerWidth / 400) : 1) + ')'
 	let w = innerWidth / 2, h = innerHeight / 2
 	showcol = !+localStorage.nc
 	showmass = !!+localStorage.sm
@@ -47,7 +48,7 @@ requestAnimationFrame(function a(){
 		const r = cell.r*z*px, x = (cell.x * z - left)*px, y = (cell.y * z - top)*px
 		cell.draw(x, y, r)
 	}
-	arena.style.backgroundSize = +localStorage.pg ? '50px' : z * 50 + 'px'
+	arena.style.backgroundSize = +localStorage.pg ? '50px' : z * 800 + 'px'
 	arena.style.backgroundPosition = +localStorage.pg ? w - x * 0.1 + 'px ' + (h - y * 0.1) + 'px' : -left + 'px ' + -top + 'px'
 	arena.style.imageRendering = z < 1 ? '' : 'pixelated'
 	requestAnimationFrame(a)
