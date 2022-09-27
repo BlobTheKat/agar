@@ -21,7 +21,7 @@ requestAnimationFrame(function a(){
 	const dt = Math.min(.05, (Date.now() - last) / 1000)
 	fps += (1 / dt - fps) / 10
 	if(!fps)fps = 1
-	myscore.children[3].textContent = 'FPS: '+Math.round(fps)
+	myscore.children[4].textContent = 'FPS: '+Math.round(fps)
 	last = Date.now()
 	if(!+localStorage.lc){
 		x += (t.x - x) * dt * 20; y += (t.y - y) * dt * 20
