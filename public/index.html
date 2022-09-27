@@ -17,7 +17,7 @@
 		</div>
 		<div id="minimap"></div>
 		<div id="touchsplit" onclick="split()">:</div>
-		<div id="toucheject" onclick="eject()">&#xe165;</div>
+		<div id="toucheject" ontouchstart="let i=5;eject();this.timeout = setInterval(()=>i-->0||eject(),100)" ontouchend="clearInterval(this.timeout)">&#xe165;</div>
 		<div id="myscore">
 			<span>Score: 0</span><span id="pause" onclick="pause()">&#xe073;</span>
 			<div></div>
