@@ -1,6 +1,6 @@
 @font-face {
 	font-family: Glyphicons;
-	src: url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/fonts/glyphicons-halflings-regular.woff2);
+	src: url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/fonts/glyphicons-halflings-regular.woff2);
 }
 @font-face {
 	font-family: agar;
@@ -149,6 +149,8 @@ hr{
 
 .pref input[type=checkbox]{
 	margin-left: 5px;
+	margin-right: 2px;
+	padding: 0;
 	cursor: pointer;
 }
 #arena{
@@ -236,4 +238,34 @@ minicell{
 }
 #arena circle{
 	stroke-width: 5px;
+}
+#pause{
+	font-family: Glyphicons;
+	line-height: 17px;
+	padding: 0 3px;
+	position: absolute;
+	color: #0005;
+}
+#touchsplit, #toucheject{
+	--a: calc(10vmin + 60px);
+	width: var(--a); height: var(--a);
+	border-radius: 50%; background: #0002;
+	position: absolute; bottom: calc(var(--a) / 4); right: calc(var(--a) * 1.1);
+	border: #0001 4px solid;
+	color: white; text-align: center;
+	line-height: calc(var(--a) - 8px);
+	font-size: calc(var(--a) / 2.4); font-family: Glyphicons;
+	display: none;
+}
+#touchsplit{
+	bottom: calc(var(--a) * 1.3);
+	right: calc(var(--a) / 2.4);
+	transform: rotate(60deg);
+	font-family: agar;
+	font-size: calc(var(--a) / 1.2);
+	line-height: 90%;
+}
+@media (hover: none) {
+	#minimap{ transform: scale(0.5) translate(100px, 100px); }
+	#touchsplit, #toucheject{ display: block; }
 }

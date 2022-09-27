@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link rel="stylesheet" href="./style.css">
 		<title>blob.io</title>
 	</head>
@@ -15,11 +15,11 @@
 			<div></div><div></div><div></div><div></div><div></div>
 			<div></div>
 		</div>
-		<div id="minimap">
-
-		</div>
+		<div id="minimap"></div>
+		<div id="touchsplit" onclick="split()">:</div>
+		<div id="toucheject" onclick="eject()">&#xe165;</div>
 		<div id="myscore">
-			<span>Score: 0</span>
+			<span>Score: 0</span><span id="pause" onclick="pause()">&#xe073;</span>
 			<div></div>
 			<div></div>
 			<div></div>

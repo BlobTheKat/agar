@@ -6,6 +6,7 @@ const players = new Map
 const minimapNodes = new Map
 export let w = 14142, h = 14142
 const cells = new Map
+globalThis.cells = cells
 export const layers = {}
 export let ping = 0
 export default {
@@ -39,7 +40,7 @@ export default {
 			cell.ty = y
 			cell.tr = r
 			cell.kind = kind
-			if(kind == 0)cell.points = null
+			if(kind < 0x1000)cell.points = null
 			else if(!cell.points)cell.points = []
 			cell.name = name
 			;(layers[r] || (layers[r] = new Set)).add(cell)
@@ -73,7 +74,7 @@ export default {
 		}
 	},
 	16(view){
-		const [sel, pel, tpsel] = myscore.children
+		const [sel, _, pel, tpsel] = myscore.children
 		players.clear()
 		const lb = [], scores = []
 		let mei = 0, top = 65536
@@ -120,31 +121,3 @@ export default {
 		location = 'about:blank'
 	}
 }
-let mx = 0, my = 0, mz = 0
-function movepacket(){
-	packet.setUint8(0, 0)
-	if(!!+localStorage.lc){
-		packet.setInt16(1, (mx + (x - t.x) * z) * z / t.z)
-		packet.setInt16(3, (my + (y - t.y) * z) * z / t.z)
-	}else{
-		packet.setInt16(1, mx)
-		packet.setInt16(3, my)
-	}
-	packet.setInt16(5, 0)
-	ws.send(new Uint8Array(packet.buffer, 0, 7))
-}
-arena.addEventListener('mousemove', function(e){
-	if(!e.isTrusted || !ws)return
-	mx = e.clientX - innerWidth / 2
-	my = e.clientY - innerHeight / 2
-	movepacket()
-})
-arena.addEventListener('wheel', function(e){
-	if(!e.isTrusted || !ws)return
-	packet.setUint8(0, 0)
-	packet.setInt16(1, mx)
-	packet.setInt16(3, my)
-	packet.setInt16(5, mz = e.deltaY)
-	ws.send(new Uint8Array(packet.buffer, 0, 7))
-	e.preventDefault()
-}, {passive:false})

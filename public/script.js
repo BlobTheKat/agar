@@ -47,21 +47,75 @@ globalThis.play = function(){
 	else i += txt.encodeInto(localStorage.nick, new Uint8Array(packet.buffer, 1)).written
 	ws.send(new Uint8Array(packet.buffer, 0, i))
 }
+globalThis.pause = function(){
+	overlay.classList.remove('hidden')
+	packet.setUint8(0, 0)
+	packet.setInt32(1, 0)
+	ws.send(new Uint8Array(packet.buffer, 0, 5))
+}
+globalThis.split = function(){
+	packet.setUint8(0, 16)
+	ws.send(new Uint8Array(packet.buffer, 0, 1))
+}
+globalThis.eject = function(){
+	packet.setUint8(0, 17)
+	ws.send(new Uint8Array(packet.buffer, 0, 1))
+}
+globalThis.gun = function(){
+	packet.setUint8(0, 18)
+	ws.send(new Uint8Array(packet.buffer, 0, 1))
+}
 onkeydown = function(e){
 	const key = e.key.toLowerCase()
-	if(key == ' ' && ws && !e.repeat){
-		packet.setUint8(0, 16)
-		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(key == 'w' && ws){
-		packet.setUint8(0, 17)
-		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(key == 'z' && ws){
-		packet.setUint8(0, 18)
-		ws.send(new Uint8Array(packet.buffer, 0, 1))
-	}else if(key == 'escape'){
-		overlay.classList.remove('hidden')
-		packet.setUint8(0, 0)
-		packet.setInt32(1, 0)
-		ws.send(new Uint8Array(packet.buffer, 0, 5))
-	}
+	if(key == ' ' && ws && !e.repeat) split()
+	else if(key == 'w' && ws)eject()
+	else if(key == 'z' && ws && !e.repeat)gun()
+	else if(key == 'escape') pause()
 }
+
+let mx = 0, my = 0, mz = 0
+function movepacket(){
+	packet.setUint8(0, 0)
+	if(!!+localStorage.lc){
+		packet.setInt16(1, (mx + (x - t.x) * z) * z / t.z)
+		packet.setInt16(3, (my + (y - t.y) * z) * z / t.z)
+	}else{
+		packet.setInt16(1, mx)
+		packet.setInt16(3, my)
+	}
+	packet.setInt16(5, 0)
+	ws.send(new Uint8Array(packet.buffer, 0, 7))
+}
+function move(e){
+	if(!ws)return
+	mx = e.clientX - innerWidth / 2
+	my = e.clientY - innerHeight / 2
+	movepacket()
+}
+function zoom(deltaY){
+	packet.setUint8(0, 0)
+	packet.setInt16(1, mx)
+	packet.setInt16(3, my)
+	packet.setInt16(5, mz = deltaY)
+	ws.send(new Uint8Array(packet.buffer, 0, 7))
+}
+arena.addEventListener('mousemove', move)
+let prevDist = 0
+arena.addEventListener('touchmove', e => {
+	if(e.touches[1]){
+		const [a, b] = e.touches
+		const dist = (b.clientX - a.clientX) ** 2 + (b.clientY - a.clientY) ** 2
+		if(prevDist)zoom(Math.log(prevDist / dist) * 500)
+		prevDist = dist
+		return
+	}
+	move(e.touches[0])
+})
+arena.addEventListener('touchstart', e => move(e.changedTouches[0]))
+arena.addEventListener('touchend', e => (e.preventDefault(),prevDist = 0))
+arena.addEventListener('contextmenu', e => e.preventDefault())
+arena.addEventListener('wheel', function(e){
+	if(!e.isTrusted || !ws)return
+	zoom(e.deltaY)
+	e.preventDefault()
+}, {passive:false})

@@ -42,7 +42,7 @@ export class Cell{
 			case 0: circle(x, y, r); break
 			case 1: jelly(x, y, r, this, true); break
 			case 2: jelly(x, y, r, this, false); break
-			case 3: circle(x, y, r); break
+			case 3: jelly(x, y, r, this, false); break
 		}
 		const pattern = showskins ? patterns[this.name.toLowerCase()] : undefined
 		if(pattern !== null){
