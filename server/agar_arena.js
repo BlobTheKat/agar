@@ -5,11 +5,11 @@ import { Virus } from './cells/virus.js'
 import { packet } from './util.js'
 import { performance } from 'perf_hooks'
 import { MotherVirus } from './cells/mothervirus.js'
-const safe = Math.floor(packet.length * 0.7)
+const safe = Math.floor(packet.byteLength - 13)
 const packet8 = new Uint8Array(packet.buffer)
 let i = 13
 function encode({x, y, r, kind, id, nameid}){
-	if(i > safe)return
+	if(i >= safe)return
 	packet.setInt16(i + 14, kind)
 	packet.setInt32(i + 10, r)
 	packet.setInt32(i + 7, y)
@@ -25,11 +25,12 @@ export const arena = new class extends Arena{
 	ejectedCount = 0
 	tick(){
 		super.tick()
-		for(let i = Math.min(CONFIG.food.spawn, CONFIG.food.min - this.foodCount); i > 0; i--){
+		if(this.ticks % 40)return
+		for(let i = Math.min(CONFIG.food.spawn * 40, CONFIG.food.min - this.foodCount); i > 0; i--){
 			const f = new Food(...super.randpos())
 			super.add(f)
 		}
-		for(let i = Math.min(CONFIG.virus.spawn, CONFIG.virus.min - this.virusCount); i > 0; i--){
+		for(let i = Math.min(CONFIG.virus.spawn * 40, CONFIG.virus.min - this.virusCount); i > 0; i--){
 			const f = Math.random() < CONFIG.mothervirus.ratio ? new MotherVirus(...super.randpos()) : new Virus(...super.randpos())
 			super.add(f)
 		}

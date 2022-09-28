@@ -5,8 +5,7 @@ const txt = new TextDecoder()
 const players = new Map
 const minimapNodes = new Map
 export let w = 14142, h = 14142
-const cells = new Map
-globalThis.cells = cells
+export const cells = new Map
 export const layers = {}
 export let ping = 0
 export default {

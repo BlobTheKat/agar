@@ -1,7 +1,7 @@
 import { Cell } from "../cell.js";
 import { EjectedMass } from "./ejectedmass.js";
 import { PlayerCell } from "./player.js";
-const {minmass, maxmass, splitmass, grow} = CONFIG.virus
+const {minmass, maxmass, splitmass, grow, max} = CONFIG.virus
 const playerminmass = CONFIG.player.minmass
 export class Virus extends Cell{
 	constructor(x, y){
@@ -42,6 +42,7 @@ export class Virus extends Cell{
 			}
 			if(this.m > splitmass){
 				this.m = minmass
+				if(arena.virusCount >= max)return
 				const double = new Virus(this.x, this.y)
 				arena.add(double)
 				const x = this.x - cell.x, y = this.y - cell.y

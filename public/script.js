@@ -1,8 +1,10 @@
-import messages from "./messages.js"
+import messages, { cells, layers } from "./messages.js"
 globalThis.ws = null
 let t = -1
 let autoplay = false
 globalThis.connect = function connect(ip){
+	cells.clear()
+	for(const k in layers)delete layers[k]
 	clearTimeout(t)
 	let w = innerWidth, h = innerHeight
 	let sd = Math.max(w / 2000, h / 1125)

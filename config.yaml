@@ -22,7 +22,7 @@ zoomlimit: 1 #values > 1 allow zooming out more than the automatic zoom
 food:
   min: 5000 #amount of food that will be spawned
   max: 10000 #amount of food not allowed to be more than this
-  spawn: 25 #how much food spawned per tick
+  spawn: 20 #how much food spawned per tick
   #mass chosen randomly between the two
   minmass: 2
   maxmass: 2
@@ -30,7 +30,7 @@ food:
 virus:
   min: 50
   max: 100
-  spawn: 1 #how many viruses spawned per tick
+  spawn: 0.1 #how many viruses spawned per tick
   #mass chosen randomly between the two
   minmass: 100
   maxmass: 100
