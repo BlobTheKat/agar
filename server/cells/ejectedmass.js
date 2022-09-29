@@ -1,8 +1,9 @@
 import { Cell } from "../cell.js";
 import { colors } from "../util.js";
-const {solid, cooldown} = CONFIG.eject
+let solid = 0, cooldown = 0
+config(() => ({solid, cooldown} = CONFIG.eject))
 export class EjectedMass extends Cell{
-	age = cooldown
+	age = 0
 	added(arena){
 		arena.ejectedCount++
 	}
@@ -14,8 +15,8 @@ export class EjectedMass extends Cell{
 		if(solid && cell instanceof EjectedMass)super.solid(cell, d)
 	}
 	tick(){
-		if(this.age < 1)return
-		this.age--
+		if(this.age >= cooldown)return
+		this.age++
 		return true
 	}
 }

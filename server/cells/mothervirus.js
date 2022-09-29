@@ -1,10 +1,10 @@
 import { Cell } from "../cell.js";
 import { Food } from "./food.js";
 import { Virus } from "./virus.js";
-const {foodmass, minmass, maxmass, foodspawn, efficiency} = CONFIG.mothervirus
-const {max: maxfood} = CONFIG.food
+let foodmass = 0, minmass = 0, maxmass = 0, foodspawn = 0, efficiency = 0, maxfood = 0
+config(() => (maxfood = CONFIG.food, {foodmass, minmass, maxmass, foodspawn, efficiency} = CONFIG.mothervirus))
 const take = foodmass / efficiency
-export class MotherVirus extends Cell{
+export class MotherVirus extends Virus{
 	constructor(x, y){
 		super(x, y, minmass, 0x1c66)
 	}
@@ -24,12 +24,7 @@ export class MotherVirus extends Cell{
 		}
 		return true
 	}
-	eaten(a, b){ Virus.prototype.eaten.call(this, a, b) }
-	solid(){}
-	added(arena){
-		arena.virusCount++
-	}
-	removed(arena){
-		arena.virusCount--
+	eat(a, b){
+		super.eat(a, b, true)
 	}
 }

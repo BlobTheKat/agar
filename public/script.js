@@ -53,7 +53,8 @@ globalThis.pause = function(){
 	overlay.classList.remove('hidden')
 	packet.setUint8(0, 0)
 	packet.setInt32(1, 0)
-	ws.send(new Uint8Array(packet.buffer, 0, 5))
+	packet.setInt16(5, 0)
+	ws.send(new Uint8Array(packet.buffer, 7))
 }
 globalThis.split = function(){
 	packet.setUint8(0, 16)

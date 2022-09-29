@@ -2,11 +2,12 @@ import { WebSocketServer } from 'ws'
 import {repl} from 'basic-repl'
 import YAML from 'yaml'
 import {promises as fs} from 'fs'
-import { packet } from './util.js';
+const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
-;(async()=>{for await(const _ of fs.watch('../config.yaml'))Object.assign(globalThis.CONFIG, YAML.parse(''+await fs.readFile('../config.yaml')))})()
+globalThis.config = f => (fns.push(f),f())
 const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
 const wss = new WebSocketServer({port: CONFIG.port || 37730})
+const packet = new DataView(new ArrayBuffer(7))
 wss.on('connection', (ws, {url}) => {
 	if(bans.has(ws._socket.remoteAddress))return ws.close()
 	let [w, h] = url.slice(1).split('/')
@@ -19,12 +20,13 @@ wss.on('connection', (ws, {url}) => {
 	packet.setUint32(3, arena.w)
 	packet.setUint32(0, arena.h)
 	packet.setUint8(0, 17)
-	ws.send(new Uint8Array(packet.buffer, 0, 7))
+	ws.send(packet)
 	ws.on('close', closed)
 	ws.on('message', message)
 })
 function closed(){
 	sockets.delete(this.sock)
+	if(this.sock.spectating)this.sock.spectating.spectated--
 	setTimeout(rmcells, CONFIG.celltimeout * 1000, this.sock.cells)
 	for(const cell of this.sock.cells)cell.dx = cell.dy = 0,cell.kind=0x2666
 }
@@ -35,7 +37,7 @@ function message(msg){
 	if(!msg.length)return
 	const d = new DataView(msg.buffer, msg.byteOffset + 1, msg.byteLength - 1)
 	const fn = messages[msg[0]]
-	if(fn)try{fn(this.sock, d)}catch{}
+	if(fn)try{fn(this.sock, d)}catch(e){console.log(e)}
 }
 repl('(server) ', cmd => {
 	cmd = cmd.trim()
@@ -50,12 +52,8 @@ repl('(server) ', cmd => {
 
 })
 repl('$ ', cmd => console.log(eval(cmd)))
-function test(){
-	let a = new Uint8Array(100000)
-	const s = [...sockets][0]
-	a.fill(255)
-	s.send(a)
-	a.fill(0)
-	a[0] = 255
-	s.send(a)
+
+for await(const _ of fs.watch('../config.yaml')){
+	Object.assign(globalThis.CONFIG, YAML.parse(''+await fs.readFile('../config.yaml')))
+	for(const f of fns)f()
 }

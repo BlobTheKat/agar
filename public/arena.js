@@ -21,7 +21,7 @@ requestAnimationFrame(function a(){
 	const dt = Math.min(.05, (Date.now() - last) / 1000)
 	fps += (1 / dt - fps) / 10
 	if(!fps)fps = 1
-	myscore.children[4].textContent = 'FPS: '+Math.round(fps)
+	myscore.children[2].textContent = 'FPS: '+Math.round(fps)
 	last = Date.now()
 	if(!+localStorage.lc){
 		x += (t.x - x) * dt * 20; y += (t.y - y) * dt * 20
@@ -48,7 +48,7 @@ requestAnimationFrame(function a(){
 		const r = cell.r*z*px, x = (cell.x * z - left)*px, y = (cell.y * z - top)*px
 		cell.draw(x, y, r)
 	}
-	arena.style.backgroundSize = +localStorage.pg ? '50px' : z * 800 + 'px'
+	arena.style.backgroundSize = +localStorage.pg ? '800px' : z * 800 + 'px'
 	arena.style.backgroundPosition = +localStorage.pg ? w - x * 0.1 + 'px ' + (h - y * 0.1) + 'px' : -left + 'px ' + -top + 'px'
 	arena.style.imageRendering = z < 1 ? '' : 'pixelated'
 	requestAnimationFrame(a)

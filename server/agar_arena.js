@@ -3,8 +3,8 @@ import { max_width, max_height } from './config.js'
 import { Food } from './cells/food.js'
 import { Virus } from './cells/virus.js'
 import { packet } from './util.js'
-import { performance } from 'perf_hooks'
 import { MotherVirus } from './cells/mothervirus.js'
+import { PlayerSocket, players } from './socket.js'
 const safe = Math.floor(packet.byteLength - 13)
 const packet8 = new Uint8Array(packet.buffer)
 let i = 13
@@ -18,14 +18,32 @@ function encode({x, y, r, kind, id, nameid}){
 	packet.setUint16(i + 16, nameid)
 	i += 18
 }
+export const idlebots = []
+function newbot(){
+	const sock = new PlayerSocket(null, arena)
+	sockets.add(sock)
+	return sock
+}
+const enc = new TextEncoder()
+const names = []
+config(() => {
+	while(names.length)names.pop()
+	for(const n of CONFIG.bots.names)names.push(enc.encode(n))
+	if(!names.length)names.push('')
+})
 export const arena = new class extends Arena{
 	foodCount = 0
 	virusCount = 0
 	players = 0
 	ejectedCount = 0
+	botCount = 0
 	tick(){
 		super.tick()
 		if(this.ticks % 40)return
+		for(let i = CONFIG.bots.amount - (players.size + this.botCount >> 1); i > 0; i--){
+			this.botCount++
+			(idlebots.pop() || newbot()).play(names[Math.floor(Math.random() * names.length)])
+		}
 		for(let i = Math.min(CONFIG.food.spawn * 40, CONFIG.food.min - this.foodCount); i > 0; i--){
 			const f = new Food(...super.randpos())
 			super.add(f)
@@ -36,16 +54,19 @@ export const arena = new class extends Arena{
 		}
 	}
 }(Math.min(CONFIG.width, max_width), Math.min(CONFIG.height, max_height))
+
 let tps = 40, last = Date.now()
 setInterval(function tick(){
 	const now = Date.now()
-	let dt = now - last
+	let dt = now - last || 1
 	last = now
 	tps += (1000 / dt - tps) / 10
 	arena.tick()
+	const teams = !!CONFIG.teams
 	if(!(arena.ticks % 30)){
 		i = 9
-		packet.setUint8(8, Math.min(200, tps * 5))
+		packet.setUint8(6, Math.min(200, tps * 5))
+		packet.setUint16(7, players.size)
 		for(const s of sockets){
 			if(!s.score)continue
 			packet.setUint8(i, s.name.length)
@@ -53,10 +74,11 @@ setInterval(function tick(){
 			i += s.name.length
 			packet.setFloat32(i, s.score)
 			packet.setUint16(i + 4, s.id); i += 6
+			if(teams)packet.setUint16(i, s.kind), i += 2
 		}
 		packet8[0] = 16
-		const buf = new Uint8Array(packet.buffer, 0, i)
 		for(const sock of sockets){
+			if(!sock.ws)continue
 			if(sock.ping > 65535){
 				packet.setUint16(6, 0)
 				if(now - sock.ping > 30e3){
@@ -64,14 +86,15 @@ setInterval(function tick(){
 					sockets.delete(sock)
 					continue
 				}
-			}else packet.setUint16(6, sock.ping),sock.ping = now
-			packet.setUint32(1, sock.id)
-			packet.setUint8(5, sock.id / 4294967296)
-			sock.send(buf)
+			}else packet.setUint16(3, sock.ping),sock.ping = now
+			packet.setUint16(1, sock.id)
+			packet.setUint8(5, (teams << 7) + sock.spectated)
+			sock.send(packet, i)
 		}
 	}
 	for(const sock of sockets){
 		sock.control()
+		if(!sock.ws)continue
 		let a = sock.cached2; sock.cached2 = sock.cached, sock.cached = a
 		i = 13
 		const rw = sock.rw / sock.z * sock.mz, rh = sock.rh / sock.z * sock.mz
@@ -85,7 +108,7 @@ setInterval(function tick(){
 		packet.setUint32(6, sock.y)
 		packet.setUint32(3, sock.x)
 		packet.setUint32(0, Math.floor(i / 18))
-		sock.send(new Uint8Array(packet.buffer, 0, i), false)
+		sock.send(packet, i, false)
 		i = 1
 		packet8[0] = 3
 		try{
@@ -96,7 +119,7 @@ setInterval(function tick(){
 				a.delete(cell)
 			}
 		}catch{}
-		sock.send(new Uint8Array(packet.buffer, 0, i))
+		sock.send(packet, i)
 	}
 }, 23)
 export const sockets = new Set

@@ -271,3 +271,14 @@ minicell{
 	#minimap{ transform: scale(0.5) translate(100px, 100px); }
 	#touchsplit, #toucheject{ display: block; }
 }
+
+#leaderboard.teams div{
+	display: none;
+}
+#leaderboard.teams div:first-child{
+	display: block;
+	width: 150px;
+	height: 150px;
+	margin: 15px;
+	border-radius: 75px;
+}

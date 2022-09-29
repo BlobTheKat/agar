@@ -1,8 +1,18 @@
+import { idlebots } from "./agar_arena.js";
+import { bot } from "./bot.js";
 import { EjectedMass } from "./cells/ejectedmass.js";
 import { PlayerCell } from "./cells/player.js";
-import { packet } from "./util.js";
+import { colors, packet } from "./util.js";
 const empty = new Uint8Array()
-const players = new Map
+export const players = new Map
+let speedexponent = 0, speed = 0
+let loss = 0, ejectspeed = 0, ejectrand = 0
+config(() => {
+	({speedexponent, speed} = CONFIG.player)
+	loss = CONFIG.eject.mass / CONFIG.eject.efficiency
+	ejectspeed = CONFIG.eject.speed
+	ejectrand = CONFIG.eject.randomthrow
+})
 export class PlayerSocket{
 	x = 0; y = 0; z = .5; mz = 1
 	rw = 100; rh = 100
@@ -15,24 +25,39 @@ export class PlayerSocket{
 	score = 0
 	id = 0
 	spectating = null
-	pong = 0
+	spectated = 0
 	ping = 0
 	constructor(socket, arena){
 		this.ws = socket
 		this.arena = arena
 	}
-	makeid(){
-		let i = 0
-		while(players.has(++i));
-		if(i == 65536)return 0
-		this.id = i
-		players.set(i, this)
-		return i
+	play(name){
+		if(players.size >= CONFIG.maxplayers)return this.spectate(0)
+		const teams = Math.min(CONFIG.teams, colors.length)
+		if(this.spectating)this.spectating.spectated--,this.spectating = null
+		if(this.ws){
+			packet.setUint8(0, 1)
+			this.send(packet, 1)
+		}
+		this.dx = this.dy = 0
+		if(this.cells.size)return
+		let id = 0
+		while(players.has(++id));
+		if(id == 65536)return
+		this.id = id
+		players.set(id, this)
+		const cell = new PlayerCell(...this.arena.randpos(), this, teams ? this.kind || colors[Math.floor(Math.random() * teams)] : undefined)
+		cell.age = 50
+		this.kind = cell.kind
+		this.cells.add(cell)
+		this.arena.add(cell)
+		this.name = name
+		cell.nameid = id
 	}
 	spectate(id){
 		this.z = 0.2
 		this.mz = 1
-		this.spectating = players.get(id) || null
+		if(this.spectating = players.get(id) || null)this.spectating.spectated++
 	}
 	control(){
 		if(this.spectating){
@@ -41,13 +66,14 @@ export class PlayerSocket{
 			this.z = this.spectating.z
 			return
 		}
-		const {speedexponent, speed} = CONFIG.player
+		this.reframe()
+		if(!this.ws)bot(this)
 		const x = this.dx / this.z * this.mz + this.x
 		const y = this.dy / this.z * this.mz + this.y
 		let score = 0
 		for(const cell of this.cells){
 			if(!cell.m){
-				this.cells.delete(cell);
+				this.cells.delete(cell)
 				if(!this.cells.size)this.died()
 				continue
 			}
@@ -61,7 +87,6 @@ export class PlayerSocket{
 			cell.dx += (dx - cell.dx) / smoothness
 			cell.dy += (dy - cell.dy) / smoothness
 		}
-		this.reframe()
 		this.score = score
 	}
 	reframe(){
@@ -80,8 +105,10 @@ export class PlayerSocket{
 	died(){
 		players.delete(this.id)
 		this.score = 0
-		packet.setUint8(0, 2)
-		this.send(new Uint8Array(packet.buffer, 0, 1))
+		if(this.ws){
+			packet.setUint8(0, 2)
+			this.send(packet, 1)
+		}else this.arena.botCount--, idlebots.push(this)
 	}
 	newcell(x, y, m){
 		if(this.cells.size >= CONFIG.player.maxcells)return null
@@ -109,27 +136,25 @@ export class PlayerSocket{
 	}
 	eject(){
 		if(this.arena.ejectedCount >= CONFIG.eject.max)return
-		const loss = CONFIG.eject.mass / CONFIG.eject.efficiency
-		const speed = CONFIG.eject.speed, rand = CONFIG.eject.randomthrow
 		for(const cell of this.cells){
 			if(cell.m < CONFIG.player.minmass + loss)continue
 			const fac = Math.sqrt(cell.dx * cell.dx + cell.dy * cell.dy) || 1
 			const blob = new EjectedMass(cell.x + cell.dx * cell.r / fac, cell.y + cell.dy * cell.r / fac, CONFIG.eject.mass, cell.kind | 0x1000)
 			cell.m -= loss
 			//TODO: spawn at surface
-			blob.dx = cell.dx * speed / fac + Math.random() * rand - rand/2
-			blob.dy = cell.dy * speed / fac + Math.random() * rand - rand/2
+			blob.dx = cell.dx * ejectspeed / fac + Math.random() * ejectrand - ejectrand/2
+			blob.dy = cell.dy * ejectspeed / fac + Math.random() * ejectrand - ejectrand/2
 			this.arena.add(blob)
 		}
 	}
-	send(buf, critical = true){
+	send({buffer}, i, critical = true){
 		if(this.ws._socket._writableState.buffered.length){
 			//can't reuse buffer; must clone
 			if(!critical)return //skip
-			const b = Buffer.alloc(buf.byteLength)
-			b.set(buf, 0)
+			const b = Buffer.alloc(i)
+			b.set(new Uint8Array(buffer, 0, i), 0)
 			this.ws.send(b)
-		}else this.ws.send(buf)
+		}else this.ws.send(new Uint8Array(buffer, 0, i))
 	}
 	[Symbol.for('nodejs.util.inspect.custom')](){
 		return this.cells.size ? 'Player(\x1b[33m'+this.cells.size+'\x1b[m) [...]' : 'Player []'

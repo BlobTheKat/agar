@@ -1,11 +1,11 @@
 import { Cell } from "../cell.js";
 import { EjectedMass } from "./ejectedmass.js";
 import { PlayerCell } from "./player.js";
-const {minmass, maxmass, splitmass, grow, max} = CONFIG.virus
-const playerminmass = CONFIG.player.minmass
+let minmass = 0, maxmass = 0, splitmass = 0, grow = 0, max = 0, playerminmass = 0
+config(() => ({minmass, maxmass, splitmass, grow, max} = CONFIG.virus,playerminmass=CONFIG.player.minmass))
 export class Virus extends Cell{
-	constructor(x, y){
-		super(x, y, Math.floor(minmass + Math.random() * (maxmass + 1 - minmass)), 0x12f1)
+	constructor(x, y, mass = Math.floor(minmass + Math.random() * (maxmass + 1 - minmass)), col = 0x12f1){
+		super(x, y, mass, col)
 	}
 	added(arena){
 		arena.virusCount++
@@ -13,7 +13,7 @@ export class Virus extends Cell{
 	removed(arena){
 		arena.virusCount--
 	}
-	eaten(cell, arena){
+	eaten(cell){
 		if(cell instanceof PlayerCell){
 			const m = cell.m * 0.2
 			let mass = m
@@ -30,7 +30,8 @@ export class Virus extends Cell{
 			}
 		}
 	}
-	eat(cell, arena){
+	eat(cell, arena, always = false){
+		if(always)return super.eat(cell, arena)
 		if(cell instanceof EjectedMass){
 			let m = super.eat(cell, arena)
 			if(!grow){

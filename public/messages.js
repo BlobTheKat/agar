@@ -1,5 +1,5 @@
 import { t, x, y, z } from "./arena.js"
-import { Cell } from "./cell.js"
+import { Cell, colors } from "./cell.js"
 let id = 0
 const txt = new TextDecoder()
 const players = new Map
@@ -73,14 +73,19 @@ export default {
 		}
 	},
 	16(view){
-		const [sel, _, pel, tpsel] = myscore.children
+		const [sel, , , pel, tpsel, pcel, spel] = myscore.children
 		players.clear()
-		const lb = [], scores = []
 		let mei = 0, top = 65536
-		id = view.getUint32(0) + view.getUint8(4) * 4294967296
-		ping = view.getUint16(5) || ping
+		id = view.getUint16(0)
+		ping = view.getUint16(2) || ping
+		let spec = view.getUint8(4)
+		const teams = spec > 127
+		spec &= 127
+		const lb = [], scores = teams ? [0, 0] : []
 		pel.textContent = 'Ping: ' + ping + 'ms'
-		tpsel.textContent = 'TPS: ' + view.getUint8(7) / 5
+		tpsel.textContent = 'TPS: ' + view.getUint8(5) / 5
+		pcel.textContent = 'Players: ' + view.getUint16(6)
+		spel.textContent = spec ? 'Spectating you: ' + (spec > 99 ? '99+' : spec) : ''
 		let i = 8
 		while(i < view.byteLength){
 			const l = view.getUint8(i++)
@@ -88,25 +93,49 @@ export default {
 			i += l
 			const score = view.getFloat32(i)
 			const sid = view.getUint16(i + 4)
-			i += 6
+			const kind = teams ? view.getUint16(i + 6) : 0
+			i += teams ? 8 : 6
 			players.set(sid, name)
-			let j = scores.findIndex(a => a < score)
-			if(j == -1)j = scores.length
-			if(sid == id)mei = j, sel.textContent = 'Score: ' + Math.floor(score)
-			else if(j <= mei)mei++
-			if(!j)top = sid
-			scores.splice(j, 0, score)
-			lb.splice(j, 0, name)
+			if(teams){
+				if(score > scores[0]){
+					scores[0] = score
+					top = sid
+				}
+				if(sid == id)sel.textContent = 'Score: ' + Math.floor(score)
+				lb[kind] = (lb[kind] || 0) + score
+				scores[1] += score
+			}else{
+				let j = scores.findIndex(a => a < score)
+				if(j == -1)j = scores.length
+				if(sid == id)mei = j, sel.textContent = 'Score: ' + Math.floor(score)
+				else if(j <= mei)mei++
+				if(!j)top = sid
+				scores.splice(j, 0, score)
+				lb.splice(j, 0, name)
+			}
 		}
 		i = 0
+		if(teams)leaderboard.classList.add('teams')
+		else leaderboard.classList.remove('teams')
 		if(spectating && spectating != top)spectating = top, play()
-		for(const s of leaderboard.children){
-			if(i == 10){
-				s.textContent = mei > 9 ? mei + 1 + '. ' + (lb[mei] || 'An Unnamed Cell') : ''
+		if(teams){
+			const [el] = leaderboard.children, gradients = []
+			let deg = 0
+			for(let kind in lb){
+				deg += lb[kind] / scores[1] * 360
+				gradients.push(colors[kind & 0xfff] + ' 0 ' + deg.toFixed(5) + 'deg')
 			}
-			s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An Unnamed Cell') : ''
-			s.className = i == mei ? 'red' : ''
-			i++
+			el.style.backgroundImage = 'conic-gradient(' + gradients.join(',') + ')'
+		}else for(const s of leaderboard.children){
+			if(i == 10 && mei > 9 && mei != lb.length){
+				s.textContent = mei + 1 + '. ' + (lb[mei] || 'An Unnamed Cell')
+				s.className = 'red'
+			}else if(i == 10)s.textContent = s.className = ''
+			else{
+				s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An Unnamed Cell') : ''
+				s.className = i == mei ? 'red' : ''
+				i++
+			}
 		}
 		packet.setUint8(0, 33)
 		ws.send(new Uint8Array(packet.buffer, 0, 1))

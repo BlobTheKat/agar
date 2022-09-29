@@ -1,4 +1,3 @@
-import { PlayerCell } from "./cells/player.js"
 import { packet } from "./util.js"
 export default {
 	0(sock, view){
@@ -8,20 +7,7 @@ export default {
 	},
 	1(sock, view){
 		//play
-		sock.spectating = null
-		packet.setUint8(0, 1)
-		sock.dx = sock.dy = 0
-		sock.send(new Uint8Array(packet.buffer, 0, 1))
-		if(sock.cells.size)return
-		if(!sock.makeid())return
-		const cell = new PlayerCell(...sock.arena.randpos(), sock)
-		cell.age = 50
-		sock.kind = cell.kind
-		sock.cells.add(cell)
-		sock.arena.add(cell)
-		sock.name = new Uint8Array(view.buffer, view.byteOffset, Math.min(view.byteLength, 48))
-		let i = 0
-		cell.nameid = sock.id
+		sock.play(new Uint8Array(view.buffer, view.byteOffset, Math.min(view.byteLength, 48)))
 	},
 	2(sock, view){
 		//spectate
@@ -45,7 +31,7 @@ export default {
 	},
 	18(sock){
 		if(!sock.cells.size)return
-		for(let i=CONFIG.eject.gun; i > 0; i--)sock.eject()
+		for(let i = CONFIG.eject.gun; i > 0; i--)sock.eject()
 	},
 	32(sock, view){
 		sock.rw = view.getUint16(0)
