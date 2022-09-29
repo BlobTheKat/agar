@@ -37,7 +37,7 @@ export class Cell{
 			else while(d++)this.points.push(this.points[0] || 0)
 		}
 		c.beginPath()
-		if(r < 10 * px || noshapes){ c.arc(x, y, r, 0, PI2) }
+		if(r < !staticshapes * 10 * px || noshapes){ c.arc(x, y, r, 0, PI2) }
 		else switch(kind){
 			case 0: circle(x, y, r); break
 			case 1: jelly(x, y, r, this, true); break

@@ -5,13 +5,13 @@ let eat2 = 0, teams = false
 config(() => (eat2 = CONFIG.eatratio * 2, teams = !!CONFIG.teams))
 function bot1(cell, cell2, d2){
 	if(teams && cell2.kind == cell.kind)return -0.1
-	if(cell2 instanceof MotherVirus)return -1
 	const ratio = cell.m / cell2.m
 	if(ratio > 1){
 		if(cell2 instanceof Virus)return -100/d2
 		if(ratio > 2)return 2/ratio
 		return ratio - 1
 	}else{
+		if(cell2 instanceof MotherVirus)return -0.7
 		if(ratio < 0.5)return cell2 instanceof Virus ? 0.1 : -1
 		return 1 - 1 / ratio
 	}
