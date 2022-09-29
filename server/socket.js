@@ -3,7 +3,7 @@ import { bot } from "./bot.js";
 import { EjectedMass } from "./cells/ejectedmass.js";
 import { PlayerCell } from "./cells/player.js";
 import { colors, packet } from "./util.js";
-const empty = new Uint8Array()
+const specname = Uint8Array.of(83, 112, 101, 99, 116, 97, 116, 111, 114) //"Spectator"
 export const players = new Map
 let speedexponent = 0, speed = 0
 let loss = 0, ejectspeed = 0, ejectrand = 0
@@ -21,15 +21,23 @@ export class PlayerSocket{
 	cached2 = new Set
 	cells = new Set
 	kind = 0
-	name = empty
+	name = specname
 	score = 0
 	id = 0
 	spectating = null
 	spectated = 0
 	ping = 0
+	ratelimit = 0
 	constructor(socket, arena){
 		this.ws = socket
 		this.arena = arena
+	}
+	cooldown(ms){
+		const now = Date.now()
+		const next = Math.max(this.ratelimit, now - 10000) + ms
+		if(next > now)return true
+		this.ratelimit = next
+		return false
 	}
 	play(name){
 		if(players.size >= CONFIG.maxplayers)return this.spectate(0)
@@ -102,12 +110,15 @@ export class PlayerSocket{
 		this.y = y / count
 		this.z = Math.min(.6, 10 / Math.sqrt(r))
 	}
-	died(){
+	died(menu = true){
+		this.name = specname
 		players.delete(this.id)
 		this.score = 0
 		if(this.ws){
-			packet.setUint8(0, 2)
-			this.send(packet, 1)
+			if(menu){
+				packet.setUint8(0, 2)
+				this.send(packet, 1)
+			}
 		}else this.arena.botCount--, idlebots.push(this)
 	}
 	newcell(x, y, m){

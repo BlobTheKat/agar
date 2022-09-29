@@ -1,5 +1,5 @@
 import { t, x, y, z } from "./arena.js"
-import { Cell, colors } from "./cell.js"
+import { Cell, colors, darkcolors } from "./cell.js"
 let id = 0
 const txt = new TextDecoder()
 const players = new Map
@@ -8,13 +8,17 @@ export let w = 14142, h = 14142
 export const cells = new Map
 export const layers = {}
 export let ping = 0
+let tick = 0
 export default {
 	0(view){
 		let l = (view.getUint8(0) << 16) + view.getUint16(1), i = 12
 		t.x = view.getUint32(2) << 8 >> 8
 		t.y = view.getUint32(5) << 8 >> 8
 		t.z = Math.exp((view.getUint32(8) & 0xffffff) / 1e6 - 10)
-		if(!!+localStorage.lc)movepacket()
+		tick++
+		if(!(tick % 10)){
+			if(!!+localStorage.lc)movepacket()
+		}
 		while(l--){
 			const cid = view.getUint32(i) + view.getUint8(i + 4) * 4294967296
 			const x = view.getUint32(i + 4) & 0xffffff
@@ -143,6 +147,20 @@ export default {
 	17(view){
 		w = view.getUint16(1) + (view.getUint8(0) << 16)
 		h = view.getUint32(2) & 0xffffff
+	},
+	128(view){
+		const namelen = view.getUint8(0)
+		const kind = view.getUint16(1)
+		const name = txt.decode(new Uint8Array(view.buffer, view.byteOffset + 3, namelen))
+		const msg = txt.decode(new Uint8Array(view.buffer, view.byteOffset + 3 + namelen))
+		const el = document.createElement('div')
+		el.textContent = msg
+		el.setAttribute('mname', name)
+		el.style.setProperty('--col', colors[(kind & 0xfff) || 0x555])
+		if(chat.children.length > 20)chat.lastChild.remove()
+		chatbox.insertAdjacentElement('afterEnd', el)
+		el.offsetHeight
+		el.style.opacity = 0
 	},
 	255(){
 		window.close()

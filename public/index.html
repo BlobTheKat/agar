@@ -26,6 +26,9 @@
 			<div></div>
 			<div></div>
 		</div>
+		<div id="chat">
+			<input id="chatbox" maxlength="256" placeholder="Press enter to chat" />
+		</div>
 		<div id="overlay">
 			<div id="sel">
 				<h1 id="title">Agar.io</h1>
@@ -44,7 +47,8 @@
 					<input type="checkbox" key="hl" onchange="leaderboard.style.display=this.checked?'none':''"> Hide leaderboard
 					<input type="checkbox" key="hs" onchange="myscore.style.display=this.checked?'none':''"> Hide stats<br>
 					<input type="checkbox" key="lr"> Lower resolution
-					<input type="checkbox" key="nj"> No shapes<br>
+					<input type="checkbox" key="nj"> No shapes
+					<input type="checkbox" key="hc" onchange="chat.style.display=this.checked?'none':''"> Hide chat<br>
 					<div style="width:100%;text-align:center;color:#aaa;font-weight:bold;font-size:20px">-- For fun --</div>
 					<input type="checkbox" key="ec"> Ecstasy
 					<input type="checkbox" key="rz"> Reversed z index
@@ -64,7 +68,6 @@
 				</div>
 			</div>
 		</div>
-		<script>WS=WebSocket;delete WebSocket</script>
 		<script src="./script.js" type="module"></script>
 	</body>
 </html>

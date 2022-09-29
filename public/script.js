@@ -11,7 +11,7 @@ globalThis.connect = function connect(ip){
 	if(sd > 1)w /= sd, h /= sd
 	w = Math.floor(w); h = Math.floor(h)
 	if(ws)ws.onclose = () => {}, ws.close()
-	ws = new WS(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
+	ws = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
 	ws.binaryType = 'arraybuffer'
 	let opened = false
 	ws.addEventListener('message', ({data}) => {
@@ -74,6 +74,19 @@ onkeydown = function(e){
 	else if(key == 'w' && ws)eject()
 	else if(key == 'z' && ws && !e.repeat)gun()
 	else if(key == 'escape') pause()
+	else if(key == 'enter'){
+		if(overlay.classList.contains('hidden')) setTimeout(() => chatbox.focus())
+		else play()
+	}
+}
+
+chatbox.onkeypress = function(e){
+	if(e.key != 'Enter')return
+	packet.setUint8(0, 128)
+	if(!this.value)return
+	ws.send(new Uint8Array(packet.buffer, 0, 1 + txt.encodeInto(this.value, new Uint8Array(packet.buffer, 1)).written))
+	this.value = ''
+	setTimeout(() => this.blur())
 }
 
 let mx = 0, my = 0, mz = 0

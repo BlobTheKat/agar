@@ -2,11 +2,10 @@ import { Arena } from './arena.js'
 import { max_width, max_height } from './config.js'
 import { Food } from './cells/food.js'
 import { Virus } from './cells/virus.js'
-import { packet } from './util.js'
+import { packet, packet8 } from './util.js'
 import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
 const safe = Math.floor(packet.byteLength - 13)
-const packet8 = new Uint8Array(packet.buffer)
 let i = 13
 function encode({x, y, r, kind, id, nameid}){
 	if(i >= safe)return

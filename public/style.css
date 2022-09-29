@@ -39,10 +39,10 @@ h1{
 	padding: 10px;
 }
 input[type=checkbox]{
-	height: unset;
+	height: unset !important;
 	box-shadow: none !important;
 }
-input, btn{
+#sel input, #sel btn{
 	display: inline-block;
 	flex: 1;
 	height: 34px;
@@ -59,7 +59,7 @@ input, btn{
 	outline: none;
 	min-width: 0;
 }
-btn{
+#sel btn{
 	background-color: var(--a);
 	text-align: center;
 	white-space: nowrap;
@@ -70,11 +70,11 @@ btn{
 	border: 1px solid var(--b);
 	box-shadow: none;
 }
-btn:hover{
+#sel btn:hover{
 	background-color: var(--c);
   border-color: var(--d);
 }
-btn:active{
+#sel btn:active{
 	background-color: var(--d);
 	border-color: var(--c);
 }
@@ -90,7 +90,7 @@ btn:active{
 	--c: #ec971f;
 	--d: #d58512;
 }
-#pref{
+#sel #pref{
 	flex: 0 0 48px;
 	--a: #5bc0de;
 	--b: #46b8da;
@@ -98,11 +98,11 @@ btn:active{
 	--d: #269abc;
 	font-family: Glyphicons;
 }
-input:focus{
+#sel input:focus{
 	border-color: #66afe9;
   box-shadow: inset 0 1px 1px #0002, 0 0 8px #6ae9;
 }
-.btns{
+#sel .btns{
 	display: flex;
 	gap: 6px;
 }
@@ -149,7 +149,7 @@ hr{
 	border-top: 1px solid #eee;
 }
 
-.pref input[type=checkbox]{
+#sel .pref input[type=checkbox]{
 	margin-left: 5px;
 	margin-right: 2px;
 	padding: 0;
@@ -187,7 +187,7 @@ hr{
 	border: 8px #00000015 solid;
 }
 
-#leaderboard, #myscore, #minimap{
+#leaderboard, #myscore, #minimap, #chat{
 	z-index: 2;
 	position: absolute;
 	background: #0005;
@@ -282,3 +282,38 @@ minicell{
 	margin: 15px;
 	border-radius: 75px;
 }
+
+#chat{
+	bottom: 2px;
+	left: 2px;
+	padding: 3px;
+	background: none;
+	display: flex;
+	flex-direction: column-reverse;
+	color: #000;
+	width: 240px;
+}
+#chat input{
+	border: none;
+	outline: none;
+	font-size: 16px;
+	background: none;
+	font-family: agar;
+	padding: 4px;
+	background: #0004;
+	margin-top: 5px;
+	color: unset;
+}
+#chat input::placeholder{ color: inherit; opacity: 0.5 }
+.dark ~ #chat{color: #fff}
+#chat div:before{
+	content: "[" attr(mname) "] ";
+	color: var(--col);
+}
+#chat{opacity: 0.5}
+#chat div{
+	word-break: break-word;
+	opacity: 1;
+	transition: opacity 3s 7s;
+}
+#chat:focus-within, #chat:focus-within div{opacity: 1 !important; transition: none}
