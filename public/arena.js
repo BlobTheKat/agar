@@ -2,11 +2,33 @@ import {layers} from './messages.js'
 export let x = 0
 export let y = 0
 export let z = 0.5
+let scale = 1, sw = 0, sh = 0
+function calc_size(){
+	let w = innerWidth, h = innerHeight
+	let sd = Math.max(w / 2000, h / 1125)
+	if(sd > 1)w /= sd, h /= sd
+	else{
+		sd = Math.min(w / 800, h / 450)
+		if(sd < 1)w /= sd, h /= sd
+		else sd = 1
+	}
+	w = Math.round(w); h = Math.round(h)
+	if(w != sw || h != sh)resized(w, h, sd)
+}
+function resized(w, h, sd){
+	if(!ws)return
+	scale = sd
+	packet.setUint8(0, 32)
+	packet.setUint16(1, sw = w)
+	packet.setUint16(3, sh = h)
+	ws.send(new Uint8Array(packet.buffer, 0, 5))
+}
 export let t = {x: 0, y: 0, z: 1}
 let last = Date.now()
 export const c = arena.getContext('2d')
 let fps = 45
 requestAnimationFrame(function a(){
+	calc_size()
 	sel.style.transform = 'translateY(-50%) scale(' + (innerWidth < 400 ? (innerWidth / 400) : 1) + ')'
 	let w = innerWidth / 2, h = innerHeight / 2
 	showcol = !+localStorage.nc
@@ -25,7 +47,7 @@ requestAnimationFrame(function a(){
 	last = Date.now()
 	if(!+localStorage.lc){
 		x += (t.x - x) * dt * 20; y += (t.y - y) * dt * 20
-		z *= (t.z / z) ** (dt * 3)
+		z *= (t.z * scale / z) ** (dt * 3)
 	}
 	if(!z)z = t.z || 1
 	const left = x * z - w, top = y * z - h

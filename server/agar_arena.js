@@ -60,6 +60,7 @@ setInterval(function tick(){
 	let dt = now - last || 1
 	last = now
 	tps += (1000 / dt - tps) / 10
+	if(sockets.size - arena.botCount - idlebots.length < 1)return
 	arena.tick()
 	const teams = !!CONFIG.teams
 	if(!(arena.ticks % 30)){

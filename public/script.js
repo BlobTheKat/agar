@@ -6,32 +6,19 @@ globalThis.connect = function connect(ip){
 	cells.clear()
 	for(const k in layers)delete layers[k]
 	clearTimeout(t)
-	let w = innerWidth, h = innerHeight
-	let sd = Math.max(w / 2000, h / 1125)
-	if(sd > 1)w /= sd, h /= sd
-	w = Math.floor(w); h = Math.floor(h)
 	if(ws)ws.onclose = () => {}, ws.close()
-	ws = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
-	ws.binaryType = 'arraybuffer'
+	let w = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
+	w.binaryType = 'arraybuffer'
 	let opened = false
-	ws.addEventListener('message', ({data}) => {
+	w.addEventListener('message', ({data}) => {
 		opened = true
 		const view = new DataView(data, 1)
 		const [code] = new Uint8Array(data, 0, 1)
 		const fn = messages[code]
 		if(fn)fn(view)
 	})
-	ws.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
-	ws.onopen = onresize
-}
-onresize = function(){
-	if(autoplay)play()
-	if(ws){
-		packet.setUint8(0, 32)
-		packet.setUint16(1, innerWidth)
-		packet.setUint16(3, innerHeight)
-		ws.send(new Uint8Array(packet.buffer, 0, 5))
-	}
+	w.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
+	w.onopen = () => {ws = w;if(autoplay)play()}
 }
 localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.host.endsWith('.github.io') || top.location.host.endsWith('.chit.cf') ? '' : top.location.host + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }

@@ -118,6 +118,7 @@ export default {
 				lb.splice(j, 0, name)
 			}
 		}
+		const rows = innerHeight < 470 ? 5 : 10
 		i = 0
 		if(teams)leaderboard.classList.add('teams')
 		else leaderboard.classList.remove('teams')
@@ -131,12 +132,15 @@ export default {
 			}
 			el.style.backgroundImage = 'conic-gradient(' + gradients.join(',') + ')'
 		}else for(const s of leaderboard.children){
-			if(i == 10 && mei > 9 && mei != lb.length){
+			s.style.backgroundImage = ''
+			if(i == rows && mei >= rows && mei != lb.length){
 				s.textContent = mei + 1 + '. ' + (lb[mei] || 'An Unnamed Cell')
 				s.className = 'red'
-			}else if(i == 10)s.textContent = s.className = ''
+				i++
+			}else if(i == rows)s.textContent = s.className = ''
 			else{
-				s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An Unnamed Cell') : ''
+				if(i > rows)s.textContent = ''
+				else s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An Unnamed Cell') : ''
 				s.className = i == mei ? 'red' : ''
 				i++
 			}

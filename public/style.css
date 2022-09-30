@@ -203,6 +203,8 @@ hr{
 	color: white;
 	width: 200px;
 	text-align: center;
+	transform-origin: top right;
+	z-index: 1;
 }
 #myscore{
 	top: 2px;
@@ -249,7 +251,7 @@ minicell{
 	color: #0005;
 }
 #touchsplit, #toucheject{
-	--a: calc(10vmin + 60px);
+	--a: calc(10vmin + 60px); z-index: 2;
 	width: var(--a); height: var(--a);
 	border-radius: 50%; background: #0002;
 	position: absolute; bottom: calc(var(--a) / 4); right: calc(var(--a) * 1.1);
@@ -268,7 +270,7 @@ minicell{
 	line-height: 90%;
 }
 @media (hover: none) {
-	#minimap{ transform: scale(0.5) translate(100px, 100px); }
+	#minimap{ transform: scale(0.5); transform-origin: bottom right; }
 	#touchsplit, #toucheject{ display: block; }
 }
 
@@ -281,6 +283,19 @@ minicell{
 	height: 150px;
 	margin: 15px;
 	border-radius: 75px;
+	font-size: 0;
+}
+
+@media (max-height: 540px){ #leaderboard{ transform: scale(0.8) } }
+@media (max-height: 370px){ #leaderboard{ transform: scale(0.63) } }
+@media (max-height: 335px){ #leaderboard{ transform: scale(0.5) } }
+@media (max-height: 418px){
+	#leaderboard.teams{ transform: scale(0.5) }
+	#leaderboard.teams div:first-child{
+		margin: 6px 30px;
+		width: 120px;
+		height: 120px;
+	}
 }
 
 #chat{
