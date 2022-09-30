@@ -8,6 +8,7 @@ export let w = 14142, h = 14142
 export const cells = new Map
 export const layers = {}
 export let ping = 0
+export let skins = true
 let tick = 0
 export default {
 	0(view){
@@ -84,12 +85,13 @@ export default {
 		ping = view.getUint16(2) || ping
 		let spec = view.getUint8(4)
 		const teams = spec > 127
-		spec &= 127
+		skins = !!(spec & 64)
+		spec &= 63
 		const lb = [], scores = teams ? [0, 0] : []
 		pel.textContent = 'Ping: ' + ping + 'ms'
 		tpsel.textContent = 'TPS: ' + view.getUint8(5) / 5
 		pcel.textContent = 'Players: ' + view.getUint16(6)
-		spel.textContent = spec ? 'Spectating you: ' + (spec > 99 ? '99+' : spec) : ''
+		spel.textContent = spec ? 'Spectating you: ' + (spec > 60 ? '60+' : spec) : ''
 		let i = 8
 		while(i < view.byteLength){
 			const l = view.getUint8(i++)

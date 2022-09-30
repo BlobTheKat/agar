@@ -11,7 +11,7 @@ function bot1(cell, cell2, d2){
 		if(ratio > 2)return 2/ratio
 		return ratio - 1
 	}else{
-		if(cell2 instanceof MotherVirus)return -0.7
+		if(cell2 instanceof MotherVirus)return -1
 		if(ratio < 0.5)return cell2 instanceof Virus ? 0.1 : -1
 		return 1 - 1 / ratio
 	}
@@ -47,5 +47,11 @@ export function bot(sock){
 		fsx *= d; fsy *= d
 		if(fsx * fdx + fsy * fdy > 3000 && d < 400 / (sock.cells.size + 3))sock.split()
 	}
-	if(sock.score > arena.w * arena.h / 1000 && Math.random() < .0002)sock.died()
+	if(sock.score > arena.w * arena.h / 1000 && Math.random() < .0002){
+		for(const c of sock.cells){
+			sock.arena.remove(c)
+			sock.cells.delete(c)
+		}
+		sock.died()
+	}
 }

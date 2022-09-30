@@ -62,7 +62,7 @@ setInterval(function tick(){
 	tps += (1000 / dt - tps) / 10
 	if(sockets.size - arena.botCount - idlebots.length < 1)return
 	arena.tick()
-	const teams = !!CONFIG.teams
+	const teams = (!!CONFIG.teams << 7) + (CONFIG.skins << 6)
 	if(!(arena.ticks % 30)){
 		i = 9
 		packet.setUint8(6, Math.min(200, tps * 5))
@@ -88,7 +88,7 @@ setInterval(function tick(){
 				}
 			}else packet.setUint16(3, sock.ping),sock.ping = now
 			packet.setUint16(1, sock.id)
-			packet.setUint8(5, (teams << 7) + sock.spectated)
+			packet.setUint8(5, teams + Math.min(sock.spectated, 63))
 			sock.send(packet, i)
 		}
 	}

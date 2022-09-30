@@ -1,12 +1,20 @@
 import { showcol, showmass, shownames, showskins, staticskins, staticshapes, noshapes, c, x0, y0, max, px, z } from "./arena.js"
 import { circle, jelly } from "./jelly.js"
 const skins = new Set('2ch.hk,facebook,pokerface,4chan,facepunch,poland,8,feminism,portugal,8ch,fidel,prodota,9gag,finland,prussia,cia,firework,putin,acorn,fly,qing dynasty,aer,fox,quebec,alien x,france,queen,apple,french kingdom,raptor,apple_,german empire,receita federal,argentina,germany,reddit,army,greece,astronaut,hellcat,rockstar,australia,hillary,romania,austria,hollande,russia,ayy lmao,hong kong,sanik,bait,hungary,satanist,bangladesh,hunter,scotland,basketball,imperial japan,sealand,basketball_,india,shark,bat,indiana,sir,bear,indonesia,snake,belgium,iran,somalia,berlusconi,iraq,south korea,birthday troll,ireland,spain,blatter,irs,spider,blob,italy,spitfire,boris,jamaica,stalin,bosnia,japan,stars,botswana,kc,steam,brazil,kim jong-un,stussy,bulgaria,kraken,sumo,bush,latvia,sweden,byzantium,lion,switzerland,cambodia,lithuania,t rex,cameron,lizard,taiwan,cat,luxembourg,texas,maldives,thailand,chaplin,mammoth,tiger,chavez,mars,trump,chile,matriarchy,tsarist russia,china,mercury,tsipras,chrome,merkel,tumblr,clinton,mexico,turkey,confederate,moon,cougar,nasa,ukraine,coyote,netherlands,uncle_sam,creeper,nigeria,united kingdom,croatia,north korea,uranus,crocodile,norway,usa,denmark,nuclear,ussr,dilma,obama,venezuela,doge,origin,venus,dragon,owo,vinesauce,ea,pakistan,wasp,earth day,palin,wicked_cat,earth,panther,wojak,estonia,patriarchy,wolf,european union,peru,yaranaika,evil,piccolo,zebra'.split(','))
-const patterns = {clear: null}
-for(const skin of skins){
+const patterns = {}
+function skin(name){
+	if(!name || !showskins)return
+	let s = patterns[name]
+	if(s === undefined && skins.has(name)){
+		//load
+		loadskin(name)
+		return undefined
+	}else return s || undefined
+}
+function loadskin(skin){
 	const i = new Image()
 	i.src = './skins/' + skin + '.png'
 	i.onload = () => patterns[skin] = c.createPattern(i, null)
-
 }
 const PI2 = Math.PI * 2
 export const colors = [], darkcolors = [], hex = '00123456789abcdef'
@@ -44,7 +52,7 @@ export class Cell{
 			case 2: jelly(x, y, r, this, false); break
 			case 3: jelly(x, y, r, this, false); break
 		}
-		const pattern = showskins ? patterns[this.name.toLowerCase()] : undefined
+		const pattern = skin(this.name.toLowerCase())
 		if(pattern !== null){
 			c.fillStyle = showcol ? colors[this.kind & 0xfff] : '#bbb'
 			c.fill()

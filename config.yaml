@@ -13,6 +13,7 @@ height: 14142
 friction: 0.02 #0.02 => velocity *= 0.98 every tick
 eatratio: 1.3 #one cell must be 30% bigger than another to eat it
 teams: 0 # How many teams in team gamemode. Set to 0 if gamemode isn't teams
+skins: true # false to disable all skins (recommended for team mode)
 
 #server config
 port: 37730

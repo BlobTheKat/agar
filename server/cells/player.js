@@ -29,10 +29,11 @@ export class PlayerCell extends Cell{
 		return true
 	}
 	solid(cell, d){
+		const age = min(cell.age, this.age)
+		if(age <= 20)return
 		if(cell.sock == this.sock){
-			const age = min(cell.age, this.age)
 			const minage = .5833 * min(cell.m, this.m) + mergetime
-			if(age > 20 && age < minage)super.solid(cell, d)
+			if(age < minage)super.solid(cell, d)
 		}else if(teams && cell.kind == this.kind)return super.solid(cell, d)
 	}
 	eat(cell, arena){

@@ -1,4 +1,4 @@
-import {layers} from './messages.js'
+import {layers, skins} from './messages.js'
 export let x = 0
 export let y = 0
 export let z = 0.5
@@ -34,7 +34,7 @@ requestAnimationFrame(function a(){
 	showcol = !+localStorage.nc
 	showmass = !!+localStorage.sm
 	shownames = !+localStorage.nn
-	showskins = !+localStorage.ns
+	showskins = !+localStorage.ns && skins
 	staticskins = !!+localStorage.ss
 	noshapes = !!+localStorage.nj
 	staticshapes = !!+localStorage.sj
