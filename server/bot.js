@@ -47,5 +47,5 @@ export function bot(sock){
 		fsx *= d; fsy *= d
 		if(fsx * fdx + fsy * fdy > 3000 && d < 400 / (sock.cells.size + 3))sock.split()
 	}
-	if(this.score > arena.w * arena.h / 1000 && Math.random() < .0002)sock.died()
+	if(sock.score > arena.w * arena.h / 1000 && Math.random() < .0002)sock.died()
 }
