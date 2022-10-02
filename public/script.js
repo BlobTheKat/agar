@@ -20,7 +20,7 @@ globalThis.connect = function connect(ip){
 	w.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
 	w.onopen = () => {ws = w;if(autoplay)play()}
 }
-localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.github.io') || top.location.hostname.endsWith('.chit.cf') ? '' : top.location.hostname + ':37730')
+localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.chit.cf') ? 'server.canv.tk:37730' : top.location.hostname.endsWith('.github.io') ? '' : top.location.hostname + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()
