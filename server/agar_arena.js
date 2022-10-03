@@ -74,7 +74,7 @@ setInterval(function tick(){
 			i += s.name.length
 			packet.setFloat32(i, s.score)
 			packet.setUint16(i + 4, s.id); i += 6
-			if(teams)packet.setUint16(i, s.kind), i += 2
+			if(teams >> 7)packet.setUint16(i, s.kind), i += 2
 		}
 		packet8[0] = 16
 		for(const sock of sockets){
