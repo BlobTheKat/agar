@@ -22,6 +22,7 @@ export function list(){
 	if(!r.length)throw "No players online"
 	return r.join('\n')
 }
+export const l = list
 export function kick(p){
 	const {ws} = find(p)
 	ws.send(DIE)
@@ -34,6 +35,46 @@ export function kill(p){
 	}
 	return '\x1b[32mKilled them!\x1b[m'
 }
+export function crazy(p){
+	const sock = find(p);
+	while(sock.newcell(...arena.randpos(), 1));
+	for(const cell of sock.cells){
+		cell.m += Math.random() * arena.w * arena.h / 200 / CONFIG.player.maxcells
+	}
+	return '\x1b[32mKilled them!\x1b[m'
+}
+export function tp(p, nx, ny){
+	nx -= 0; ny -= 0;
+	if(nx < 0)nx = 0; if(ny < 0)ny = 0
+	if(nx >= arena.w)nx = arena.w - 0.001
+	if(ny >= arena.h)ny = arena.h - 0.001
+	for(const cell of find(p).cells){
+		const {x, y, r} = cell
+		cell.x = nx, cell.y = ny
+		arena.repos(cell, x, y, r)
+	}
+	return '\x1b[32mTeleported them to (x: '+Math.round(nx)+', y: '+Math.round(ny)+')\x1b[m'
+}
+export function one(p){
+	const cells = find(p).cells
+	let max = {m: 0}
+	for(const cell of cells)if(cell.m > max.m)max = cell
+	for(const cell of cells){
+		if(cell == max)continue
+		arena.remove(cell)
+	}
+	return '\x1b[32mKilled all but one of their cells!\x1b[m'
+}
+export function penalty(p, m = '0.1'){
+	m -= 0
+	if(!(m > 0)){
+		find(p).penalty = 0
+		return '\x1b[32mRemoved penalty!\x1b[m'
+	}
+	if(m >= 100)return '\x1b[31mInvalid value'
+	find(p).penalty = 1 - m/4000
+	return '\x1b[32mPenalty set to '+m+'%/s\x1b[m'
+}
 export function killall(){
 	for(const s of sockets)for(const cell of s.cells)arena.remove(cell)
 	return '\x1b[32mKilled all players!\x1b[m'
@@ -42,6 +83,7 @@ export function reset(){
 	for(const cell of arena.select(0,arena.w,0,arena.h))arena.remove(cell)
 	return '\x1b[32mRemoved all cells!\x1b[m'
 }
+export const clear = reset
 export function feed(p, m){
 	m -= 0
 	if(!m)throw 'Invalid mass'
@@ -69,6 +111,10 @@ list \x1b[30m-- List online players\x1b[m
 feed \x1b[34m<player> \x1b[32m<mass> \x1b[30m-- Give mass to a player\x1b[m
 kill \x1b[34m<player> \x1b[30m-- Kill all of a player's cells\x1b[m
 merge \x1b[34m<player> \x1b[30m-- Allow a player's cells to merge\x1b[m
+tp \x1b[34m<player> \x1b[32m<x> <y> \x1b[30m-- Teleport player to (x, y)\x1b[m
+one \x1b[34m<player> \x1b[30m-- Kill all except one of player's cells\x1b[m
+penalty \x1b[34m<player> \x1b[32m<percent_per_second> \x1b[30m-- Make a player lose mass FAST (0 to disable)\x1b[m
+crazy \x1b[34m<player> \x1b[30m-- Inflate player's cells to quickly overtake the whole map
 kick \x1b[34m<player> \x1b[30m-- Kick a player from the game\x1b[m
 ban \x1b[34m<player> \x1b[30m-- Ban a player's IP from the game\x1b[m
 pardon \x1b[36m<ip> \x1b[30m-- Revoke an IP ban\x1b[m

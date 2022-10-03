@@ -19,7 +19,7 @@ export class PlayerCell extends Cell{
 	eaten(cell, arena){}
 	tick(){
 		this.age++
-		this.m *= massdecay
+		this.m *= this.sock.penalty || massdecay
 		if(this.m < minmass)this.m = minmass
 		if(this.m > maxmass){
 			this.m /= 2

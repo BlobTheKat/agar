@@ -14,7 +14,7 @@ export default {
 		//spectate
 		if(!sock.spectating){
 			packet.setUint8(0, 1)
-			sock.send(packet 1)
+			sock.send(packet, 1)
 		}
 		if(sock.cells.size){
 			for(const c of sock.cells){

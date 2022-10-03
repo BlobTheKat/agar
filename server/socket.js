@@ -28,6 +28,7 @@ export class PlayerSocket{
 	spectated = 0
 	ping = 0
 	ratelimit = 0
+	penalty = 0
 	constructor(socket, arena){
 		this.ws = socket
 		this.arena = arena
