@@ -53,7 +53,6 @@ export default {
 		const {length} = sock.name
 		packet.setUint8(0, 128)
 		packet.setUint8(1, length)
-		console.log(sock.kind)
 		packet.setUint16(2, sock.kind)
 		packet8.set(sock.name, 4)
 		packet8.set(new Uint8Array(view.buffer, view.byteOffset), length + 4)

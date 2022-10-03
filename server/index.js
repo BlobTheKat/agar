@@ -37,7 +37,7 @@ function message(msg){
 	if(!msg.length)return
 	const d = new DataView(msg.buffer, msg.byteOffset + 1, msg.byteLength - 1)
 	const fn = messages[msg[0]]
-	if(fn)try{fn(this.sock, d)}catch(e){console.log(e)}
+	if(fn)try{fn(this.sock, d)}catch{}
 }
 repl('(server) ', cmd => {
 	cmd = cmd.trim()

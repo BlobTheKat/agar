@@ -41,7 +41,7 @@ export function crazy(p){
 	for(const cell of sock.cells){
 		cell.m += Math.random() * arena.w * arena.h / 200 / CONFIG.player.maxcells
 	}
-	return '\x1b[32mKilled them!\x1b[m'
+	return '\x1b[32mOVERPOWERED!!!\x1b[m'
 }
 export function tp(p, nx, ny){
 	nx -= 0; ny -= 0;
