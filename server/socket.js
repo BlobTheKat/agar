@@ -13,6 +13,11 @@ config(() => {
 	ejectspeed = CONFIG.eject.speed
 	ejectrand = CONFIG.eject.randomthrow
 })
+
+function rmcells(sock){
+	for(const c of sock.cells)sock.arena.remove(c)
+}
+
 export class PlayerSocket{
 	x = 0; y = 0; z = .5; mz = 1
 	rw = 100; rh = 100
@@ -111,9 +116,17 @@ export class PlayerSocket{
 		this.y = y / count
 		this.z = Math.min(.6, 10 / Math.sqrt(r))
 	}
+	disconnected(){
+		if(!this.id)return
+		players.delete(this.id)
+		if(this.spectating)this.spectating.spectated--
+		for(const cell of this.cells)cell.dx = cell.dy = 0,cell.kind=0x2666
+		setTimeout(rmcells, CONFIG.celltimeout * 1000, this)
+	}
 	died(menu = true){
 		this.name = specname
 		players.delete(this.id)
+		this.id = 0
 		this.score = 0
 		if(this.ws){
 			if(menu){

@@ -26,12 +26,7 @@ wss.on('connection', (ws, {url}) => {
 })
 function closed(){
 	sockets.delete(this.sock)
-	if(this.sock.spectating)this.sock.spectating.spectated--
-	setTimeout(rmcells, CONFIG.celltimeout * 1000, this.sock.cells)
-	for(const cell of this.sock.cells)cell.dx = cell.dy = 0,cell.kind=0x2666
-}
-function rmcells(cells){
-	for(const c of cells)arena.remove(c)
+	this.sock.disconnected()
 }
 function message(msg){
 	if(!msg.length)return
