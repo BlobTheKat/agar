@@ -99,11 +99,11 @@ setInterval(function tick(){
 		i = 13
 		const rw = sock.rw / sock.z * sock.mz, rh = sock.rh / sock.z * sock.mz
 		const x0 = sock.x - rw, x1 = sock.x + rw, y0 = sock.y - rh, y1 = sock.y + rh
-		for(const cell of arena.select(x0, x1, y0, y1)){
-			if(cell.x + cell.r < x0 || cell.x - cell.r >= x1 || cell.y + cell.r < y0 || cell.y - cell.r >= y1)continue
+		arena.select(x0, x1, y0, y1, cell => {
+			if(cell.x + cell.r < x0 || cell.x - cell.r >= x1 || cell.y + cell.r < y0 || cell.y - cell.r >= y1) return
 			sock.cached2.add(cell)
 			if(!a.delete(cell) || arena.active.has(cell))encode(cell)
-		}
+		})
 		packet.setUint32(9, Math.log(sock.z / sock.mz) * 1e6 + 10e6)
 		packet.setUint32(6, sock.y)
 		packet.setUint32(3, sock.x)

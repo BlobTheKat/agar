@@ -15,6 +15,7 @@ config(() => {
 })
 
 function rmcells(sock){
+	players.delete(sock.id)
 	for(const c of sock.cells)sock.arena.remove(c)
 }
 
@@ -118,9 +119,8 @@ export class PlayerSocket{
 	}
 	disconnected(){
 		if(!this.id)return
-		players.delete(this.id)
 		if(this.spectating)this.spectating.spectated--
-		for(const cell of this.cells)cell.dx = cell.dy = 0,cell.kind=0x2666
+		for(const cell of this.cells)cell.dx = cell.dy = 0, cell.kind=0x2666
 		setTimeout(rmcells, CONFIG.celltimeout * 1000, this)
 	}
 	died(menu = true){

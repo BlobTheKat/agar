@@ -99,7 +99,7 @@ export class Arena{
 	[Symbol.for('nodejs.util.inspect.custom')](){
 		return this.size ? 'Arena(\x1b[33m'+this.size+'\x1b[m) [...]' : 'Arena []'
 	}
-	*select(x0, x1, y0, y1){
+	select(x0, x1, y0, y1, cb){
 		let li = min(this.tl, 32 - clz32(x1 - x0 + y1 - y0 - .1 >> minboxsize + 3))
 		const l = this.layers[li]
 		let w = -(-this.lw >> li), h = l.length / w
@@ -107,7 +107,7 @@ export class Arena{
 		let sy = max(0, (y0 >> minboxsize + li) - 1), ey = min(h, -(-y1 >> minboxsize + li) + 1)
 		let eyw = ey * w
 		for(let y = sy * w;y < eyw; y += w)for(let x = sx;x < ex;x++){
-			const s = l[x + y];if(s)yield* s
+			const s = l[x + y];if(s)for(const i of s)if(cb(i))break
 		}
 		while(++li <= this.tl){
 			const l = this.layers2[li]
@@ -116,7 +116,7 @@ export class Arena{
 			ex = min(ex + 2 >> 1, w); ey = min(ey + 2 >> 1, h)
 			eyw = ey * w
 			for(let y = sy * w;y < eyw; y += w)for(let x = sx;x < ex;x++){
-				const s = l[x + y];if(s)yield* s
+				const s = l[x + y];if(s)for(const i of s)if(cb(i))break
 			}
 		}
 	}
@@ -130,11 +130,11 @@ export class Arena{
 			cell.dy *= 1 - CONFIG.friction
 			if(abs(cell.dx) < 0.01)cell.dx = 0
 			if(abs(cell.dy) < 0.01)cell.dy = 0
-			for(const cell2 of this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r)){
-				if(cell2 == cell)continue
+			this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r, cell2 => {
+				if(cell2 == cell)return
 				const dx = cell2.x - cell.x, dy = cell2.y - cell.y
 				const d = sqrt(dx * dx + dy * dy)
-				if(d > cell.r + cell2.r)continue
+				if(d > cell.r + cell2.r)return
 				const {x: oldx2, y: oldy2, r: oldr2} = cell2
 				cell.touched(cell2, d, this)
 				if(!this.active.has(cell2))cell2.touched(cell, d, this)
@@ -149,8 +149,8 @@ export class Arena{
 					if(oldx2 >> minboxsize != cell2.x >> minboxsize || oldy2 >> minboxsize != cell2.y >> minboxsize || massChanged)
 						repos.push(cell2),rc.push(oldr2, oldy2, oldx2)
 				}
-				if(!cell.m)break
-			}
+				return !cell.m
+			})
 			let a
 			while(a = repos.pop()){
 				if(!a.m){

@@ -80,7 +80,7 @@ export function killall(){
 	return '\x1b[32mKilled all players!\x1b[m'
 }
 export function reset(){
-	for(const cell of arena.select(0,arena.w,0,arena.h))arena.remove(cell)
+	arena.select(0,arena.w,0,arena.h, cell => arena.remove(cell))
 	return '\x1b[32mRemoved all cells!\x1b[m'
 }
 export const clear = reset

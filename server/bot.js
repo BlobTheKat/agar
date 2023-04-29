@@ -22,8 +22,8 @@ export function bot(sock){
 	for(const cell of sock.cells){
 		const x = cell.x, y = cell.y, r = cell.r + 500
 		let dx = 0, dy = 0, sx = 0, sy = 0
-		for(const cell2 of arena.select(x - r, x + r, y - r, y + r)){
-			if(cell2.sock == cell.sock)continue
+		arena.select(x - r, x + r, y - r, y + r, cell2 => {
+			if(cell2.sock == cell.sock) return
 			let ddx = cell2.x - x, ddy = cell2.y - y, d2 = Math.max(1, ddx * ddx + ddy * ddy)
 			let attraction = bot1(cell, cell2, d2)
 			//if(attraction < 0.001 && attraction > -0.001)continue
@@ -33,7 +33,7 @@ export function bot(sock){
 			ddy *= d
 			dx += ddx; dy += ddy
 			if(cell2.m * eat2 < cell.m && !(cell2 instanceof Food))sx += ddx, sy += ddy
-		}
+		})
 		fdx += dx * cell.m
 		fdy += dy * cell.m
 		fsx += sx * cell.m
