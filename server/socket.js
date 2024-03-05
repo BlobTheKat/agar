@@ -172,15 +172,7 @@ export class PlayerSocket{
 			this.arena.add(blob)
 		}
 	}
-	send({buffer}, i, critical = true){
-		if(this.ws._socket._writableState.buffered.length){
-			//can't reuse buffer; must clone
-			if(!critical)return //skip
-			const b = Buffer.alloc(i)
-			b.set(new Uint8Array(buffer, 0, i), 0)
-			this.ws.send(b)
-		}else this.ws.send(new Uint8Array(buffer, 0, i))
-	}
+	send({buffer}, i){ this.ws.send(buffer.slice(0, i)) }
 	[Symbol.for('nodejs.util.inspect.custom')](){
 		return this.cells.size ? 'Player(\x1b[33m'+this.cells.size+'\x1b[m) [...]' : 'Player []'
 	}
