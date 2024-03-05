@@ -23,7 +23,7 @@ key:
 cert:
 celltimeout: 60 # delay before deleting cells from disconnected players
 zoomlimit: 1 # values > 1 allow zooming out more than the automatic zoom
-autoreset: 0 # Reset the map every ... ticks. 0 = disable, 144000 = 1 hour
+autoreset: 0 # Reset the map every ... ticks. 0 = disable, 1728000 = 12 hours
 
 food:
   min: 5000 # amount of food that will be spawned
