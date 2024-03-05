@@ -7,9 +7,9 @@ export const min_mass = 1 //prevent cells having zero or negative mass
 
 //performance settings
 
-//6 = your arena tends to be 2x more packed than normal
-//7 = your arena tends to have normal density
-//8 = your arena tends to be 2x less packed than normal
+//6 = if your arena tends to be 4x more packed than normal
+//7 = if your arena tends to have normal density
+//8 = if your arena tends to be 4x less packed than normal
 export const base_physics_box_size = 7
 
 //socket settings

@@ -5,7 +5,7 @@ import { Virus } from './cells/virus.js'
 import { packet, packet8 } from './util.js'
 import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
-const safe = Math.floor(packet.byteLength - 13)
+const safe = Math.floor(packet.byteLength - 31)
 let i = 13
 function encode({x, y, r, kind, id, nameid}){
 	if(i >= safe)return
@@ -36,8 +36,14 @@ export const arena = new class extends Arena{
 	players = 0
 	ejectedCount = 0
 	botCount = 0
+	tillReset = +CONFIG.autoreset || 0
 	tick(){
 		super.tick()
+		if(CONFIG.autoreset && --this.tillReset <= 0){
+			this.reset()
+			this.tillReset = CONFIG.autoreset
+			console.info('Arena auto-reset!')
+		}
 		if(this.ticks % 40)return
 		for(let i = CONFIG.bots.amount - (players.size + this.botCount >> 1); i > 0; i--){
 			this.botCount++
@@ -124,6 +130,6 @@ setInterval(function tick(){
 }, 23)
 export const sockets = new Set
 export const bans = new Set
-export {default as messages} from './messages.js'
+export { default as messages } from './messages.js'
 export { PlayerSocket } from './socket.js'
 export * as cmds from './cli.js'

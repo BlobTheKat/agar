@@ -1,15 +1,21 @@
 import { WebSocketServer } from 'ws'
-import {repl} from 'basic-repl'
+import { repl } from 'basic-repl'
 import YAML from 'yaml'
-import {promises as fs} from 'fs'
+import { promises as fs } from 'fs'
+import https from 'https'
 const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
 globalThis.config = f => (fns.push(f),f())
 const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
-const wss = new WebSocketServer({port: CONFIG.port || 37730})
+let wss
+if(CONFIG.key && CONFIG.cert){
+	const httpServer = https.createServer({key: await fs.readFile(CONFIG.key), cert: await fs.readFile(CONFIG.cert)})
+	wss = new WebSocketServer({server: httpServer})
+	httpServer.listen(CONFIG.port || 37730)
+}else wss = new WebSocketServer({port: CONFIG.port || 37730})
 const packet = new DataView(new ArrayBuffer(7))
 wss.on('connection', (ws, {url}) => {
-	if(bans.has(ws._socket.remoteAddress))return ws.close()
+	if(bans.has(ws._socket.remoteAddress)) return ws.close()
 	let [w, h] = url.slice(1).split('/')
 	w = Math.min(2000, +w || 640); h = Math.min(1125, +h || 360)
 	const sock = new PlayerSocket(ws, arena)
@@ -50,5 +56,5 @@ repl('$ ', cmd => console.log(eval(cmd)))
 
 for await(const _ of fs.watch('../config.yaml')){
 	Object.assign(globalThis.CONFIG, YAML.parse(''+await fs.readFile('../config.yaml')))
-	for(const f of fns)f()
+	for(const f of fns) f()
 }

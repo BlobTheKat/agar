@@ -179,6 +179,7 @@ export class Arena{
 		pos[1] = floor(random() * this.h)
 		return pos
 	}
+	reset(){ this.select(0,this.w,0,this.h, cell => this.remove(cell)) }
 }
 const pos = [0,0]
 const repos = [], rc = []

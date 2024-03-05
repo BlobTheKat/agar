@@ -1,7 +1,7 @@
 a(){
 	#start live-server in public directory with specified port
 	cd public
-	npx live-server --port=$1 >> /dev/null &
+	npx static-server -p $1 >> /dev/null &
 	# save pid
 	A=$!
 	cd ..
@@ -11,6 +11,6 @@ cd server
 # install modules if they aren't already
 [ ! -d "node_modules" ] && npm i
 # the server
-node .
+node --inspect .
 # kill live-server
 [ -z "$A" ] || kill $A

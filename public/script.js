@@ -7,20 +7,20 @@ globalThis.connect = function connect(ip){
 	for(const k in layers)delete layers[k]
 	clearTimeout(t)
 	if(ws)ws.onclose = () => {}, ws.close()
-	let w = new WebSocket(ip.match(/^wss?:/) ? ip : 'ws' + location.protocol.slice(4) + '//' + ip)
+	let w = new WebSocket(ip.match(/^wss?:/) ? ip : 'wss://' + ip)
 	w.binaryType = 'arraybuffer'
 	let opened = false
 	w.addEventListener('message', ({data}) => {
 		opened = true
 		const view = new DataView(data, 1)
-		const [code] = new Uint8Array(data, 0, 1)
+		const code = new Uint8Array(data, 0, 1)[0]
 		const fn = messages[code]
-		if(fn)fn(view)
+		if(fn) fn(view)
 	})
 	w.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
 	w.onopen = () => {ws = w;if(autoplay)play()}
 }
-localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.count.land') ? 'count.land:37730' : top.location.hostname.endsWith('.github.io') ? '' : top.location.hostname + ':37730')
+localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.count.land') ? 'count.land:8443' : top.location.hostname + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()

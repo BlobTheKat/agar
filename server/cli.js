@@ -1,6 +1,6 @@
 import { sockets, bans, arena } from "./agar_arena.js";
 import { dec } from "./socket.js";
-const DIE = new Uint8Array([255])
+const DIE = Uint8Array.of(255)
 function find(player){
 	if(!player.match(/\D/)){
 		player = +player
@@ -80,8 +80,8 @@ export function killall(){
 	return '\x1b[32mKilled all players!\x1b[m'
 }
 export function reset(){
-	arena.select(0,arena.w,0,arena.h, cell => arena.remove(cell))
-	return '\x1b[32mRemoved all cells!\x1b[m'
+	arena.reset()
+	return '\x1b[32mReset arena!\x1b[m'
 }
 export const clear = reset
 export function feed(p, m){
