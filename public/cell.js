@@ -58,7 +58,7 @@ export class Cell{
 			c.fill()
 			if(pattern){
 				c.save()
-				if(staticskins)c.transform(max / 256, 0, 0, max / 256, x0, y0)
+				if(staticskins)c.transform(max / 512, 0, 0, max / 512, x0, y0)
 				else c.transform(r / 256, 0, 0, r / 256, x - r, y - r)
 				c.fillStyle = pattern
 				c.fill()
