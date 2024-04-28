@@ -72,7 +72,7 @@ setInterval(function tick(){
 	const teams = (!!CONFIG.teams << 7) + (CONFIG.skins << 6)
 	if(!(arena.ticks % 30)){
 		i = 9
-		packet.setUint8(6, Math.min(200, tps * 5))
+		packet.setUint8(6, Math.min(200, tps * 10))
 		packet.setUint16(7, players.size)
 		for(const s of sockets){
 			if(!s.score)continue

@@ -89,7 +89,7 @@ export default {
 		spec &= 63
 		const lb = [], scores = teams ? [0, 0] : []
 		pel.textContent = 'Ping: ' + ping + 'ms'
-		tpsel.textContent = 'TPS: ' + view.getUint8(5) / 5
+		tpsel.textContent = 'TPS: ' + view.getUint8(5) / 10
 		pcel.textContent = 'Players: ' + view.getUint16(6)
 		spel.textContent = spec ? 'Spectating you: ' + (spec > 60 ? '60+' : spec) : ''
 		let i = 8
