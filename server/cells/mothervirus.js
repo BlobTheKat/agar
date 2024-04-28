@@ -1,9 +1,8 @@
 import { Cell } from "../cell.js";
 import { Food } from "./food.js";
 import { Virus } from "./virus.js";
-let foodmass = 0, minmass = 0, maxmass = 0, foodspawn = 0, efficiency = 0, maxfood = 0
-config(() => (maxfood = CONFIG.food, {foodmass, minmass, maxmass, foodspawn, efficiency} = CONFIG.mothervirus))
-const take = foodmass / efficiency
+let foodmass = 0, minmass = 0, maxmass = 0, foodspawn = 0, efficiency = 0, maxfood = 0, take = 0
+config(() => {maxfood = CONFIG.food, {foodmass, minmass, maxmass, foodspawn, efficiency} = CONFIG.mothervirus; take = foodmass / efficiency})
 export class MotherVirus extends Virus{
 	constructor(x, y){
 		super(x, y, minmass, 0x1c66)
