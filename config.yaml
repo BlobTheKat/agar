@@ -2,7 +2,7 @@
 
 # Measurements:
 # size, length: 50 = 1 grid space
-# time: 40 ticks = 1 second
+# time: 20 ticks = 1 second
 # mass: a cell 10 grid spaces wide has a mass of 625; 20 grid spaces wide = 2500; 40 grid spaces = 10000
 # mass formula: mass = radius * radius / 100
 
@@ -10,7 +10,7 @@
 # basic config
 width: 14142
 height: 14142
-friction: 0.02 # velocity reduced by 2% every tick
+friction: 0.04 # velocity reduced by 2% every tick
 eatratio: 1.3 # one cell must be 30% bigger than another to eat it
 teams: 0 # How many teams in team gamemode. Set to 0 if gamemode isn't teams
 skins: true # false to disable all skins (recommended for team mode)
@@ -23,12 +23,12 @@ key:
 cert:
 celltimeout: 60 # delay before deleting cells from disconnected players
 zoomlimit: 1 # values > 1 allow zooming out more than the automatic zoom
-autoreset: 0 # Reset the map every ... ticks. 0 = disable, 1728000 = 12 hours
+autoreset: 0 # Reset the map every ... ticks. 0 = disable, 864000 = 12 hours
 
 food:
   min: 5000 # amount of food that will be spawned
   max: 10000 # amount of food not allowed to be more than this
-  spawn: 20 # how much food spawned per tick (default = 20 = 800 per second)
+  spawn: 40 # how much food spawned per tick (default = 40 = 800 per second)
   # mass chosen randomly between the two
   minmass: 2
   maxmass: 2
@@ -36,7 +36,7 @@ food:
 virus:
   min: 50
   max: 100
-  spawn: 0.1 # how many viruses spawned per tick (default = 0.1 = 1 every 10 ticks = 4 per second)
+  spawn: 0.2 # how many viruses spawned per tick (default = 0.1 = 1 every 10 ticks = 4 per second)
   # mass chosen randomly between the two
   minmass: 100
   maxmass: 100
@@ -48,7 +48,7 @@ mothervirus:
   # mass starts as min and cannot go above max
   minmass: 200
   maxmass: 20000 # not vanilla but used as a safeguard anyway
-  foodspawn: 2 # food spawned per tick
+  foodspawn: 4 # food spawned per tick
   foodmass: 3
   efficiency: 1 # 1 mass fed in will eject how much food mass out
 
@@ -57,22 +57,22 @@ player:
   startmass: 20
   minmass: 18 # splitting or ejecting cannot make you smaller than this
   maxmass: 22500
-  mergetime: 1200 # default = 1200 = 30s
-  speed: 55
+  mergetime: 600 # default = 600 = 30s
+  speed: 110
   speedexponent: 0.439 # how much your speed slows down as you grow. If you find big cells are too slow, decrease this
-  massdecay: 0.002 # fraction of a player's mass that he loses per second
+  massdecay: 0.0001 # fraction of a player's mass that he loses per tick
 
 eject:
   solid: true # whether ejected mass collide with each other. true = less lag
   mass: 20
   efficiency: 0.9
-  cooldown: 10
+  cooldown: 5
   randomthrow: 10 # how much to randomize ejection direction
-  speed: 17
+  speed: 34
   max: 1000
   gun: 1 # controls how much the z key ejects at a time. Set this to something high and have fun! not recommended for public servers
 
 bots:
   # Bots are experimental and tend to take over the map
-  amount: 50
+  amount: 40
   names: [2ch.hk,facebook,pokerface,4chan,facepunch,poland,"8",feminism,portugal,8ch,fidel,prodota,9gag,finland,prussia,cia,firework,putin,acorn,fly,qing dynasty,aer,fox,quebec,alien x,france,queen,apple,french kingdom,raptor,apple_,german empire,receita federal,argentina,germany,reddit,army,greece,rockstar,astronaut,hellcat,australia,hillary,romania,austria,hollande,russia,ayy lmao,hong kong,sanik,bait,hungary,satanist,bangladesh,hunter,scotland,basketball,imperial japan,sealand,basketball_,india,shark,bat,indiana,sir,bear,indonesia,snake,belgium,iran,somalia,berlusconi,iraq,south korea,birthday troll,ireland,spain,blatter,irs,spider,italy,spitfire,boris,jamaica,stalin,bosnia,japan,stars,botswana,kc,steam,brazil,kim jong-un,stussy,bulgaria,kraken,sumo,bush,latvia,sweden,byzantium,lion,switzerland,cambodia,lithuania,t rex,cameron,lizard,taiwan,cat,luxembourg,texas,maldives,thailand,chaplin,mammoth,tiger,chavez,mars,trump,chile,matriarchy,tsarist russia,china,mercury,tsipras,chrome,merkel,tumblr,clinton,mexico,turkey,confederate,moon,cougar,nasa,ukraine,coyote,netherlands,uncle_sam,creeper,nigeria,united kingdom,croatia,north korea,uranus,crocodile,norway,usa,denmark,nuclear,ussr,dilma,obama,venezuela,doge,origin,venus,dragon,vinesauce,ea,pakistan,wasp,earth day,palin,wicked_cat,earth,panther,wojak,estonia,patriarchy,wolf,european union,peru,yaranaika,evil,piccolo,zebra]

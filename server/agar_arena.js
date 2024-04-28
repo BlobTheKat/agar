@@ -61,18 +61,19 @@ export const arena = new class extends Arena{
 }(Math.min(CONFIG.width, max_width), Math.min(CONFIG.height, max_height))
 
 let tps = 20, last = Date.now()
-setInterval(function tick(){
+setTimeout(function tick(){
+	setImmediate(tick)
 	const now = Date.now()
 	let dt = now - last
 	if(dt<50) return
-	last = Math.min(last+dt, now-50)
+	last = Math.max(last+dt, now-50)
 	tps += (1000 / dt - tps) / 10
 	if(sockets.size - arena.botCount - idlebots.length < 1)return
 	arena.tick()
 	const teams = (!!CONFIG.teams << 7) + (CONFIG.skins << 6)
 	if(!(arena.ticks % 30)){
 		i = 9
-		packet.setUint8(6, Math.min(200, tps * 10))
+		packet.setUint8(6, Math.min(200, Math.round(tps * 10)))
 		packet.setUint16(7, players.size)
 		for(const s of sockets){
 			if(!s.score)continue
@@ -128,7 +129,7 @@ setInterval(function tick(){
 		}catch{}
 		sock.send(packet, i)
 	}
-}, 1)
+})
 export const sockets = new Set
 export const bans = new Set
 export { default as messages } from './messages.js'
