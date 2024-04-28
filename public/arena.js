@@ -30,6 +30,7 @@ let fps = 45
 requestAnimationFrame(function a(){
 	calc_size()
 	sel.style.transform = 'translateY(-50%) scale(' + (innerWidth < 400 ? (innerWidth / 400) : 1) + ')'
+	px = +localStorage.lr ? devicePixelRatio < 1.5 ? 0.5 : 1 : devicePixelRatio
 	let w = innerWidth / 2, h = innerHeight / 2
 	showcol = !+localStorage.nc
 	showmass = !!+localStorage.sm
@@ -38,8 +39,8 @@ requestAnimationFrame(function a(){
 	staticskins = !!+localStorage.ss
 	noshapes = !!+localStorage.nj
 	staticshapes = !!+localStorage.sj
-	max = Math.max(innerWidth, innerHeight)
-	x0 = w - max/2; y0 = h - max/2
+	max = Math.max(innerWidth, innerHeight)*px
+	x0 = w*px - max/2; y0 = h*px - max/2
 	const dt = Math.min(.05, (Date.now() - last) / 1000)
 	fps += (1 / dt - fps) / 10
 	if(!fps)fps = 1
@@ -51,7 +52,6 @@ requestAnimationFrame(function a(){
 	}
 	if(!z)z = t.z || 1
 	const left = x * z - w, top = y * z - h
-	px = +localStorage.lr ? devicePixelRatio < 1.5 ? 0.5 : 1 : devicePixelRatio
 	if(!+localStorage.ec){
 		arena.width = Math.round(innerWidth * px)
 		arena.height = Math.round(innerHeight * px)
