@@ -2,7 +2,7 @@ import { Cell } from "../cell.js";
 import { colors } from "../util.js";
 import { EjectedMass } from "./ejectedmass.js";
 let minmass = 0, maxmass = 0, startmass = 0, mergetime = 0, massdecay = 0, ejectcooldown = 0, teams = false
-config(() => ({minmass, maxmass, startmass, mergetime} = CONFIG.player,massdecay = 1 - CONFIG.player.massdecay / 40, ejectcooldown = CONFIG.eject.cooldown, teams = !!CONFIG.teams))
+config(() => ({minmass, maxmass, startmass, mergetime} = CONFIG.player,massdecay = 1 - CONFIG.player.massdecay / 20, ejectcooldown = CONFIG.eject.cooldown, teams = !!CONFIG.teams))
 const {min, floor, random} = Math
 export class PlayerCell extends Cell{
 	constructor(x, y, sock, team = 0){

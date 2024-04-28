@@ -44,27 +44,28 @@ export const arena = new class extends Arena{
 			this.tillReset = CONFIG.autoreset
 			console.info('Arena auto-reset!')
 		}
-		if(this.ticks % 40)return
+		if(this.ticks % 20)return
 		for(let i = CONFIG.bots.amount - (players.size + this.botCount >> 1); i > 0; i--){
 			this.botCount++
 			(idlebots.pop() || newbot()).play(names[Math.floor(Math.random() * names.length)])
 		}
-		for(let i = Math.min(CONFIG.food.spawn * 40, CONFIG.food.min - this.foodCount); i > 0; i--){
+		for(let i = Math.min(CONFIG.food.spawn * 20, CONFIG.food.min - this.foodCount); i > 0; i--){
 			const f = new Food(...super.randpos())
 			super.add(f)
 		}
-		for(let i = Math.min(CONFIG.virus.spawn * 40, CONFIG.virus.min - this.virusCount); i > 0; i--){
+		for(let i = Math.min(CONFIG.virus.spawn * 20, CONFIG.virus.min - this.virusCount); i > 0; i--){
 			const f = Math.random() < CONFIG.mothervirus.ratio ? new MotherVirus(...super.randpos()) : new Virus(...super.randpos())
 			super.add(f)
 		}
 	}
 }(Math.min(CONFIG.width, max_width), Math.min(CONFIG.height, max_height))
 
-let tps = 40, last = Date.now()
+let tps = 20, last = Date.now()
 setInterval(function tick(){
 	const now = Date.now()
-	let dt = now - last || 1
-	last = now
+	let dt = now - last
+	if(dt<50) return
+	last = Math.min(last+dt, now-50)
 	tps += (1000 / dt - tps) / 10
 	if(sockets.size - arena.botCount - idlebots.length < 1)return
 	arena.tick()
@@ -127,7 +128,7 @@ setInterval(function tick(){
 		}catch{}
 		sock.send(packet, i)
 	}
-}, 23)
+}, 1)
 export const sockets = new Set
 export const bans = new Set
 export { default as messages } from './messages.js'
