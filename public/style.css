@@ -269,7 +269,7 @@ minicell{
 	font-size: calc(var(--a) / 1.2);
 	line-height: 90%;
 }
-@media (hover: none) {
+@media (pointer: coarse) {
 	#minimap{ transform: scale(0.5); transform-origin: bottom right; }
 	#touchsplit, #toucheject{ display: block; }
 }
