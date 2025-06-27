@@ -56,7 +56,8 @@ globalThis.gun = function(){
 	packet.setUint8(0, 18)
 	ws.send(new Uint8Array(packet.buffer, 0, 1))
 }
-onkeydown = function(e){
+document.onkeydown = function(e){
+	if(document.activeElement != document.body) return
 	const key = e.key.toLowerCase()
 	if(key == ' ' && ws && !e.repeat) split()
 	else if(key == 'w' && ws)eject()

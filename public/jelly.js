@@ -6,10 +6,6 @@ function jelltick(p, v, n, x, y){
 	if(corr > 0)return p * 0.1 + n * 0.1 + v * 0.8 + Math.random() * 0.1 - 0.05 - corr
 	return p * 0.2 + n * 0.2 + v * 0.55 + Math.random() * 0.2 - 0.1
 }
-function pass(v, k, i){
-	if(k)return v / 2 + (i & 1 ? 1 : 0)
-	else return v
-}
 
 export function circle(x, y, r){
 	c.arc(x, y, r, 0, PI2)
@@ -35,16 +31,17 @@ export function jagged(x, y, r, cell){
 const MITER = 'miter', ROUND = 'round'
 export function jelly(x, y, r, cell, arg){
 	const {points, x: cellx, y: celly, r: cellr} = cell
+	let i = points.length, o = 0
+	if(i < 2) return circle(x, y, r)
 	const {lineWidth} = c
 	const rr = lineWidth / r, rz = 1 / r * cell.r
 	const min = Math.max(-cellr, -70) / rz / lineWidth
-	let i = points.length, o = 0
-	if(i < 2)return circle(x, y, r)
 	let cx = Math.sin(PI2 / i), cy = Math.cos(PI2 / i)
 	const first = points[0]
 	let f = Math.max(min, jelltick(points[i - 1], first, points[1], cellx, celly + cellr * (1 + first * rr)))
 	c.lineJoin = arg ? MITER : ROUND
-	c.moveTo(x, y + r + lineWidth * pass(f, arg, 0))
+	const mul = arg?.5:1, mask = +arg
+	c.moveTo(x, y + r + lineWidth * f * mul)
 	let ax = 0, ay = r
 	while(--i){
 		const p = (1 + points[i] * rr) * rz
@@ -53,7 +50,7 @@ export function jelly(x, y, r, cell, arg){
 		o = ay * cy - ax * cx
 		ax = ax * cy + ay * cx
 		ay = o
-		v = 1 + pass(v, arg, i) * rr
+		v = 1 + (v*mul + (i&mask)) * rr
 		c.lineTo(x + ax * v, y + ay * v)
 		o = i
 	}

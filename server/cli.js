@@ -22,7 +22,14 @@ export function list(){
 	if(!r.length)throw "No players online"
 	return r.join('\n')
 }
-export const l = list
+export function listp(){
+	let r = []
+	const players = {}
+	for(const s of sockets) if(s.cells.size && s.ws) r.push(s.debug())
+	if(!r.length)throw "No real players online"
+	return r.join('\n')
+}
+export { list as l, listp as lp }
 export function kick(p){
 	const {ws} = find(p)
 	ws.send(DIE)
