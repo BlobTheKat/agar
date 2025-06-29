@@ -1,32 +1,30 @@
 import { sockets, bans, arena } from "./agar_arena.js";
 import { dec } from "./socket.js";
-const DIE = Uint8Array.of(255)
+const DIE = Uint8Array.of(60)
 function find(player){
-	if(!player.match(/\D/)){
+	if(!player.match(/\D$/y)){
 		player = +player
-		for(const s of sockets)if(s.id == player)return s
+		for(const s of sockets)if(s.id == player) return s
 		throw "No player with ID "+player
 	}else{
 		const results = []
 		const reg = new RegExp(player, 'yi')
 		for(const s of sockets)if(dec.decode(s.name).match(reg))results.push(s)
-		if(results.length > 1)throw "Multiple players matching (use their ID instead):\n" + results.map(a=>a.debug()).join('\n')
-		if(!results.length)throw "No player matched the name "+player
+		if(results.length > 1) throw "Multiple players matching (use their ID instead):\n" + results.map(a=>a.debug()).join('\n')
+		if(!results.length) throw "No player matched the name "+player
 		return results[0]
 	}
 }
 export function list(){
 	let r = []
-	const players = {}
-	for(const s of sockets)if(s.cells.size)r.push(s.debug())
-	if(!r.length)throw "No players online"
+	for(const s of sockets) if(s.cells.length) r.push(s.debug())
+	if(!r.length) throw "No players online"
 	return r.join('\n')
 }
 export function listp(){
 	let r = []
-	const players = {}
-	for(const s of sockets) if(s.cells.size && s.ws) r.push(s.debug())
-	if(!r.length)throw "No real players online"
+	for(const s of sockets) if(s.ws && s.cells.length) r.push(s.debug())
+	if(!r.length) throw "No real players online"
 	return r.join('\n')
 }
 export { list as l, listp as lp }
@@ -37,16 +35,15 @@ export function kick(p){
 	return '\x1b[32mDone!\x1b[m'
 }
 export function kill(p){
-	for(const cell of find(p).cells){
+	for(const cell of find(p).cells)
 		arena.remove(cell)
-	}
 	return '\x1b[32mKilled them!\x1b[m'
 }
 export function crazy(p){
 	const sock = find(p);
-	while(sock.newcell(...arena.randpos(), 1));
+	while(sock.newcell(arena.randx(), arena.randy(), 1));
 	for(const cell of sock.cells){
-		cell.m += Math.random() * arena.w * arena.h / 200 / CONFIG.player.maxcells
+		cell.m += random() * arena.w * arena.h / 200 / CONFIG.player.maxcells
 	}
 	return '\x1b[32mOVERPOWERED!!!\x1b[m'
 }
@@ -60,15 +57,15 @@ export function tp(p, nx, ny){
 		cell.x = nx, cell.y = ny
 		arena.repos(cell, x, y, r)
 	}
-	return '\x1b[32mTeleported them to (x: '+Math.round(nx)+', y: '+Math.round(ny)+')\x1b[m'
+	return '\x1b[32mTeleported them to (x: '+round(nx)+', y: '+round(ny)+')\x1b[m'
 }
 export function one(p){
 	const cells = find(p).cells
 	let max = {m: 0}
-	for(const cell of cells)if(cell.m > max.m)max = cell
+	for(const cell of cells)if(cell.m > max.m) max = cell
 	for(const cell of cells){
-		if(cell == max)continue
-		arena.remove(cell)
+		if(cell != max)
+			arena.remove(cell)
 	}
 	return '\x1b[32mKilled all but one of their cells!\x1b[m'
 }
@@ -78,12 +75,12 @@ export function penalty(p, m = '0.1'){
 		find(p).penalty = 0
 		return '\x1b[32mRemoved penalty!\x1b[m'
 	}
-	if(m >= 100)return '\x1b[31mInvalid value'
+	if(m >= 100) return '\x1b[31mInvalid value'
 	find(p).penalty = 1 - m/4000
 	return '\x1b[32mPenalty set to '+m+'%/s\x1b[m'
 }
 export function killall(){
-	for(const s of sockets)for(const cell of s.cells)arena.remove(cell)
+	for(const s of sockets) for(const cell of s.cells) arena.remove(cell)
 	return '\x1b[32mKilled all players!\x1b[m'
 }
 export function reset(){
@@ -93,7 +90,7 @@ export function reset(){
 export const clear = reset
 export function feed(p, m){
 	m -= 0
-	if(!m)throw 'Invalid mass'
+	if(!m) throw 'Invalid mass'
 	for(const cell of find(p).cells){
 		cell.m += m
 		if(cell.m < 0)cell.m = CONFIG.player.minmass
@@ -101,7 +98,7 @@ export function feed(p, m){
 	return '\x1b[32mFed '+m+' to each of their cells!\x1b[m'
 }
 export function merge(p){
-	for(const cell of find(p).cells)cell.age = Infinity
+	for(const cell of find(p).cells) cell.age = Infinity
 	return '\x1b[32mPlayer can now merge!\x1b[m'
 }
 export function ban(p){
@@ -127,4 +124,4 @@ ban \x1b[34m<player> \x1b[30m-- Ban a player's IP from the game\x1b[m
 pardon \x1b[36m<ip> \x1b[30m-- Revoke an IP ban\x1b[m
 killall \x1b[30m-- Kill all players' cells\x1b[m
 reset \x1b[30m-- Remove all cells (including food & viruses)\x1b[m
-\x1b[30mhelp -- `+['???','help','take a wild guess','lol','this duh','unhelpful command','Unlocked at level 30','nani?!'][Math.floor(Math.random()*8)]
+\x1b[30mhelp -- `+['???','help','take a wild guess','lol','this duh','unhelpful command','Unlocked at level 30','nani?!'][floor(random()*8)]

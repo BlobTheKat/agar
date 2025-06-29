@@ -8,8 +8,8 @@
 
 
 # basic config
-width: 14142
-height: 14142
+width: 40000
+height: 40000
 friction: 0.04 # velocity reduced by 2% every tick
 eatratio: 1.3 # one cell must be 30% bigger than another to eat it
 teams: 0 # How many teams in team gamemode. Set to 0 if gamemode isn't teams
@@ -22,29 +22,30 @@ maxplayers: 128
 key:
 cert:
 celltimeout: 60 # delay before deleting cells from disconnected players
-zoomlimit: 1 # values > 1 allow zooming out more than the automatic zoom
-autoreset: 0 # Reset the map every ... ticks. 0 = disable, 864000 = 12 hours
+zoomlimit: 10 # values > 1 allow zooming out more than the automatic zoom
+autoreset: 0 # Reset the map every ... seconds. 0 = disable
 
 food:
-  min: 5000 # amount of food that will be spawned
-  max: 10000 # amount of food not allowed to be more than this
-  spawn: 40 # how much food spawned per tick (default = 40 = 800 per second)
+  min: 25 # amount of food that will be spawned per 1000x1000 grid spaces
+  max: 50 # amount of food not allowed to be more than this per 1000x1000 grid spaces
+  spawn: 4 # how much food spawned per second per 1000x1000 grid spaces
   # mass chosen randomly between the two
   minmass: 2
   maxmass: 2
 
 virus:
-  min: 50
-  max: 100
-  spawn: 0.2 # how many viruses spawned per tick (default = 0.1 = 1 every 10 ticks = 4 per second)
+  min: 0.2
+  max: 0.5
+  spawn: 0.016
   # mass chosen randomly between the two
   minmass: 100
   maxmass: 100
   grow: true #whether to grow & split or be pushed when fed
-  splitmass: 200 #mass at which virus splits apart in 2
+  splitmass: 200 # mass at which virus splits apart into 2
 
 mothervirus:
-  ratio: 0.2 # fraction of viruses that are replaced with motherviruses
+  min: 0.05
+  spawn: 0.004
   # mass starts as min and cannot go above max
   minmass: 200
   maxmass: 20000 # not vanilla but used as a safeguard anyway

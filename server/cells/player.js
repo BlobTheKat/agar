@@ -1,9 +1,10 @@
-import { Cell } from "../cell.js";
-import { colors } from "../util.js";
-import { EjectedMass } from "./ejectedmass.js";
+import { Cell } from "../cell.js"
+import { colors } from "../util.js"
+import { EjectedMass } from "./ejectedmass.js"
+
 let minmass = 0, maxmass = 0, startmass = 0, mergetime = 0, massdecay = 0, ejectcooldown = 0, teams = false
 config(() => ({minmass, maxmass, startmass, mergetime} = CONFIG.player,massdecay = 1 - CONFIG.player.massdecay, ejectcooldown = CONFIG.eject.cooldown, teams = !!CONFIG.teams))
-const {min, floor, random} = Math
+
 export class PlayerCell extends Cell{
 	constructor(x, y, sock, team = 0){
 		super(x, y, startmass, 0x2000 | (team || colors[floor(random() * 60)]))
@@ -30,23 +31,23 @@ export class PlayerCell extends Cell{
 	}
 	solid(cell, d){
 		const age = min(cell.age, this.age)
-		if(age <= 20)return
+		if(age <= 20) return
 		if(cell.sock == this.sock){
 			const minage = .5833 * min(cell.m, this.m) + mergetime
 			if(age < minage)super.solid(cell, d)
-		}else if(teams && cell.kind == this.kind)return super.solid(cell, d)
+		}else if(teams && cell.kind == this.kind) return super.solid(cell, d)
 	}
 	eat(cell, arena){
 		if(cell.sock == this.sock){
 			const minage = .5833 * min(cell.m, this.m) + mergetime
-			if(min(cell.age, this.age) < minage)return
+			if(min(cell.age, this.age) < minage) return
 			this.m += cell.m
 			cell.m = 0
 			cell.eaten(this, arena)
 			this.age += cell.age - mergetime
 			return
 		}
-		if(cell instanceof EjectedMass && cell.age < ejectcooldown)return
+		if(cell instanceof EjectedMass && cell.age < ejectcooldown) return
 		super.eat(cell, arena)
 	}
 	touchedborder(){}

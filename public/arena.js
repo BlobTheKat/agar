@@ -16,7 +16,7 @@ function calc_size(){
 	if(w != sw || h != sh)resized(w, h, sd)
 }
 function resized(w, h, sd){
-	if(!ws)return
+	if(!ws) return
 	scale = sd
 	packet.setUint8(0, 32)
 	packet.setUint16(1, sw = w)

@@ -1,5 +1,6 @@
-import { Cell } from "../cell.js";
-import { colors } from "../util.js";
+import { Cell } from "../cell.js"
+import { colors } from "../util.js"
+
 let solid = 0, cooldown = 0
 config(() => ({solid, cooldown} = CONFIG.eject))
 export class EjectedMass extends Cell{
@@ -12,10 +13,10 @@ export class EjectedMass extends Cell{
 	}
 	eat(){}
 	solid(cell, d){
-		if(solid && cell instanceof EjectedMass)super.solid(cell, d)
+		if(solid && cell instanceof EjectedMass) super.solid(cell, d)
 	}
 	tick(){
-		if(this.age >= cooldown)return
+		if(this.age >= cooldown) return
 		this.age++
 		return true
 	}

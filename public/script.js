@@ -70,9 +70,9 @@ document.onkeydown = function(e){
 }
 
 chatbox.onkeypress = function(e){
-	if(e.key != 'Enter')return
-	packet.setUint8(0, 128)
-	if(!this.value)return
+	if(e.key != 'Enter') return
+	packet.setUint8(0, 63)
+	if(!this.value) return
 	ws.send(new Uint8Array(packet.buffer, 0, 1 + txt.encodeInto(this.value, new Uint8Array(packet.buffer, 1)).written))
 	this.value = ''
 	setTimeout(() => this.blur())
@@ -92,7 +92,7 @@ function movepacket(){
 	ws.send(new Uint8Array(packet.buffer, 0, 7))
 }
 function move(e){
-	if(!ws)return
+	if(!ws) return
 	mx = e.clientX - innerWidth / 2
 	my = e.clientY - innerHeight / 2
 	movepacket()
@@ -120,7 +120,7 @@ arena.addEventListener('touchstart', e => move(e.changedTouches[0]))
 arena.addEventListener('touchend', e => (e.preventDefault(),prevDist = 0))
 arena.addEventListener('contextmenu', e => e.preventDefault())
 arena.addEventListener('wheel', function(e){
-	if(!e.isTrusted || !ws)return
+	if(!e.isTrusted || !ws) return
 	zoom(e.deltaY)
 	e.preventDefault()
 }, {passive:false})

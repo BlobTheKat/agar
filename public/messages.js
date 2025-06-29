@@ -89,7 +89,7 @@ export default {
 		spec &= 63
 		const lb = [], scores = teams ? [0, 0] : []
 		pel.textContent = 'Ping: ' + ping + 'ms'
-		tpsel.textContent = 'TPS: ' + view.getUint8(5) / 10
+		tpsel.textContent = 'TPS: ' + (view.getUint8(5) * .1).toFixed(1)
 		pcel.textContent = 'Players: ' + view.getUint16(6)
 		spel.textContent = spec ? 'Spectating you: ' + (spec > 60 ? '60+' : spec) : ''
 		let i = 8
@@ -136,13 +136,13 @@ export default {
 		}else for(const s of leaderboard.children){
 			s.style.backgroundImage = ''
 			if(i == rows && mei >= rows && mei != lb.length){
-				s.textContent = mei + 1 + '. ' + (lb[mei] || 'An Unnamed Cell')
+				s.textContent = mei + 1 + '. ' + (lb[mei] || 'An unnamed cell')
 				s.className = 'red'
 				i++
 			}else if(i == rows)s.textContent = s.className = ''
 			else{
 				if(i > rows)s.textContent = ''
-				else s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An Unnamed Cell') : ''
+				else s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An unnamed cell') : ''
 				s.className = i == mei ? 'red' : ''
 				i++
 			}
@@ -154,21 +154,21 @@ export default {
 		w = view.getUint16(1) + (view.getUint8(0) << 16)
 		h = view.getUint32(2) & 0xffffff
 	},
-	128(view){
+	63(view){
 		const namelen = view.getUint8(0)
 		const kind = view.getUint16(1)
 		const name = txt.decode(new Uint8Array(view.buffer, view.byteOffset + 3, namelen))
 		const msg = txt.decode(new Uint8Array(view.buffer, view.byteOffset + 3 + namelen))
 		const el = document.createElement('div')
 		el.textContent = msg
-		el.setAttribute('mname', name)
+		el.setAttribute('mname', name || 'An unnamed cell')
 		el.style.setProperty('--col', colors[(kind & 0xfff) || 0x555])
 		if(chat.children.length > 20)chat.lastChild.remove()
 		chatbox.insertAdjacentElement('afterEnd', el)
 		el.offsetHeight
 		el.style.opacity = 0
 	},
-	255(){
+	60(){
 		window.close()
 		location = 'about:blank'
 	}

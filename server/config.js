@@ -1,8 +1,8 @@
 //all settings in this file will require restarting the server to apply
 
 //safeguards
-export const max_width = 50000
-export const max_height = 50000
+export const max_width = 100000
+export const max_height = 100000
 export const min_mass = 1 //prevent cells having zero or negative mass
 
 //performance settings

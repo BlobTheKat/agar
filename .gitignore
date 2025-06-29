@@ -1,1 +1,3 @@
-/config.yaml
+config.yaml
+server/node_modules
+server/package-lock.json

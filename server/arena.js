@@ -1,7 +1,6 @@
 import { EjectedMass } from "./cells/ejectedmass.js"
 import { Virus } from "./cells/virus.js"
 import { base_physics_box_size as minboxsize } from "./config.js"
-const {clz32, min, max, abs, ceil, sqrt, floor, random} = Math
 export class Arena{
 	constructor(w, h){
 		this.w = w
@@ -43,7 +42,7 @@ export class Arena{
 		cell.added(this)
 	}
 	remove(cell){
-		if(!cell.r)return
+		if(!cell.r) return
 		this.size--
 		cell.removed(this)
 		this.active.delete(cell)
@@ -68,7 +67,7 @@ export class Arena{
 		let li = min(this.tl, 32 - clz32(oldr - 1 >> minboxsize))
 		const li2 = min(this.tl, 32 - clz32(cell.r - 1 >> minboxsize))
 		const back = max(li,li2,min(this.tl + 1, 32 - min(clz32(oldx ^ cell.x), clz32(oldy ^ cell.y)) - minboxsize))
-		if(li == li2 && li == back)return
+		if(li == li2 && li == back) return
 		let x = oldx >> minboxsize + li, y = oldy >> minboxsize + li
 		let w = -(-this.lw >> li)
 		if(li){
@@ -106,7 +105,7 @@ export class Arena{
 		let sx = max(0, (x0 >> minboxsize + li) - 1), ex = min(w, -(-x1 >> minboxsize + li) + 1)
 		let sy = max(0, (y0 >> minboxsize + li) - 1), ey = min(h, -(-y1 >> minboxsize + li) + 1)
 		let eyw = ey * w
-		for(let y = sy * w;y < eyw; y += w)for(let x = sx;x < ex;x++){
+		for(let y = sy * w;y < eyw; y += w) for(let x = sx;x < ex;x++){
 			const s = l[x + y];if(s)for(const i of s)if(cb(i))break
 		}
 		while(++li <= this.tl){
@@ -131,10 +130,10 @@ export class Arena{
 			if(abs(cell.dx) < 0.01)cell.dx = 0
 			if(abs(cell.dy) < 0.01)cell.dy = 0
 			this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r, cell2 => {
-				if(cell2 == cell)return
+				if(cell2 == cell) return
 				const dx = cell2.x - cell.x, dy = cell2.y - cell.y
 				const d = sqrt(dx * dx + dy * dy)
-				if(d > cell.r + cell2.r)return
+				if(d > cell.r + cell2.r) return
 				const {x: oldx2, y: oldy2, r: oldr2} = cell2
 				cell.touched(cell2, d, this)
 				if(!this.active.has(cell2))cell2.touched(cell, d, this)
@@ -174,12 +173,8 @@ export class Arena{
 		}
 		this.ticks++
 	}
-	randpos(){
-		pos[0] = floor(random() * this.w)
-		pos[1] = floor(random() * this.h)
-		return pos
-	}
+	randx(){ return floor(random() * this.w) }
+	randy(){ return floor(random() * this.h) }
 	reset(){ this.select(0,this.w,0,this.h, cell => this.remove(cell)) }
 }
-const pos = [0,0]
 const repos = [], rc = []
