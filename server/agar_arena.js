@@ -7,15 +7,16 @@ import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
 const safe = floor(packet.byteLength - 31)
 let i = 13
-function encode({x, y, r, kind, id, nameid}){
-	if(i >= safe) return
+function encode({x, y, r, kind, id, _nameid}){
+	if(i >= safe) return false
 	packet.setUint16(i + 14, kind)
 	packet.setInt32(i + 10, r)
 	packet.setInt32(i + 7, y)
 	packet.setInt32(i + 4, x + (id / 256 & 0xFF000000))
 	packet.setInt32(i, id)
-	packet.setUint16(i + 16, nameid)
+	packet.setUint16(i + 16, _nameid)
 	i += 18
+	return true
 }
 export const idlebots = []
 function newbot(){
@@ -118,32 +119,35 @@ setInterval(function tick(){
 		i = 13
 		const rw = sock.rw / sock.z * sock.mz, rh = sock.rh / sock.z * sock.mz
 		const {x, y} = sock
-		for(const cell of a) cell.nameid |= 65536
+		for(const cell of a) cell._nameid &= ~65536
 		arena.select(x-rw, x+rw, y-rh, y+rh, cell => {
 			if(abs(cell.x - x) - cell.r > rw || abs(cell.y - y) - cell.r > rh) return
 			sock.cached2.push(cell)
-			const n = cell.nameid; cell.nameid = n & 65535
-			if(!(n&65536) || arena.active.has(cell)) encode(cell)
+			const n = cell._nameid; cell._nameid = n | 65536
+			if(n&196608) encode(cell) || sock.cached2.pop()
 		})
 		packet.setUint32(9, log(sock.z / sock.mz) * 1e6 + 10e6)
 		packet.setUint32(6, sock.y)
 		packet.setUint32(3, sock.x)
 		packet.setUint32(0, floor(i / 18))
-		sock.send(packet, i)
-		i = 1
+		if(i > 13) sock.send(packet, i)
+		let j = 0
 		packet8[0] = 3
-		try{
-			for(const cell of a){
-				const n = cell.nameid
-				if(!(n&65536)) continue
-				cell.nameid = n & 65535
-				packet.setUint32(i, cell.id)
-				packet.setUint8(i + 4, cell.id / 4294967296)
-				i += 5
-			}
-		}catch{}
+		while(j < a.length){
+			i = 1
+			try{
+				for(; j < a.length; j++){
+					const cell = a[j], n = cell._nameid
+					if(n&65536) continue
+					cell._nameid = n | 65536
+					packet.setUint32(i, cell.id)
+					packet.setUint8(i + 4, cell.id / 4294967296)
+					i += 5
+				}
+			}catch{}
+			if(i > 1) sock.send(packet, i)
+		}
 		a.length = 0
-		sock.send(packet, i)
 	}
 }, 1)
 export const sockets = new Set

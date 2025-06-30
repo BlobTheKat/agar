@@ -11,7 +11,7 @@ export class Cell{
 		this.kind = kind
 		this.r = ceil(sqrt(this.m) * 10)
 		this.id = id++
-		this.nameid = 0
+		this._nameid = 65536
 	}
 	added(){}
 	removed(){}

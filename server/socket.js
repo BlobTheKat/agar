@@ -65,10 +65,10 @@ export class PlayerSocket{
 		const cell = new PlayerCell(this.arena.randx(), this.arena.randy(), this, teams ? this.kind || colors[floor(random() * teams)] : undefined)
 		cell.age = 50
 		this.kind = cell.kind
+		cell._nameid = id|65536
 		this.cells.push(cell)
 		this.arena.add(cell)
 		this.name = name
-		cell.nameid = id
 	}
 	spectate(id){
 		this.z = 0.2
@@ -143,9 +143,9 @@ export class PlayerSocket{
 		const c = new PlayerCell(x, y, this)
 		c.m = m
 		c.kind = this.kind
+		c._nameid = this.id|65536
 		this.cells.push(c)
 		this.arena.add(c)
-		c.nameid = this.id
 		return c
 	}
 	split(){

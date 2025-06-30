@@ -32,19 +32,19 @@ export class Arena{
 		a[b] ? a[b].push(cell) : (a[b] = [cell])
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li <= this.tl){
-			const a = this.clayers[li], b = x + y * w++
+			const a = this.clayers[li], b = x + y * w
 			a[b] ? a[b].push(cell) : (a[b] = [cell])
-			w >>= 1; x >>= 1; y >>= 1; li++
+			w = (w+1)>>1; x >>= 1; y >>= 1; li++
 		}
 		this.size++
-		this.active.add(cell)
+		this.active.add(cell), cell._nameid |= 131072
 		cell.added(this)
 	}
 	remove(cell){
 		if(!cell.r) return
 		this.size--
 		cell.removed(this)
-		this.active.delete(cell)
+		this.active.delete(cell), cell._nameid &= ~131072
 		let li = min(this.tl, 32 - clz32(cell.r - 1 >> minboxsize))
 		let w = -(-this.lw >> li), x = cell.x >> minboxsize + li, y = cell.y >> minboxsize + li
 		const a = this.xlayers[li], b = x + y * w
@@ -55,11 +55,11 @@ export class Arena{
 		}
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li <= this.tl){
-			const a = this.clayers[li++], b = x + y * w++
+			const a = this.clayers[li++], b = x + y * w
 			const s = a[b]
 			s.remove(cell)
 			if(!s.length) a[b] = null
-			w >>= 1; x >>= 1; y >>= 1
+			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 		cell.m = cell.r = 0
 	}
@@ -78,23 +78,23 @@ export class Arena{
 		}
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li < back){
-			const a = this.clayers[li++], b = x + y * w++
+			const a = this.clayers[li++], b = x + y * w
 			const s = a[b]
 			s.remove(cell)
 			if(!s.length) a[b] = null
-			w >>= 1; x >>= 1; y >>= 1
+			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 		li = li2; w = -(-this.lw >> li)
 		x = cell.x >> minboxsize + li; y = cell.y >> minboxsize + li
 		{
 			const a = this.xlayers[li], b = x + y * w
-			a[b] ? a[b].push(cell) : (a[b] = [])
+			a[b] ? a[b].push(cell) : (a[b] = [cell])
 		}
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li < back){
-			const a = this.clayers[li++], b = x + y * w++
-			a[b] ? a[b].push(cell) : (a[b] = [])
-			w >>= 1; x >>= 1; y >>= 1
+			const a = this.clayers[li++], b = x + y * w
+			a[b] ? a[b].push(cell) : (a[b] = [cell])
+			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 	}
 	[Symbol.for('nodejs.util.inspect.custom')](){
@@ -142,7 +142,7 @@ export class Arena{
 				if(d > cell.r + cell2.r) return
 				const {x: oldx2, y: oldy2, r: oldr2} = cell2
 				cell.touched(cell2, d, this)
-				if(!this.active.has(cell2)) cell2.touched(cell, d, this)
+				if(!(cell2._nameid&131072)) cell2.touched(cell, d, this)
 				const massChanged = oldr2 * oldr2 < cell2.m * 100 || (oldr2 - 1) * (oldr2 - 1) >= cell2.m * 100
 				if(massChanged && cell2.m)cell2.r = ceil(sqrt(cell2.m) * 10)
 				if(cell2.x<0) cell2.x = 0, cell2.touchedborder(2)
@@ -150,7 +150,7 @@ export class Arena{
 				if(cell2.x>=this.w) cell2.x = this.w - 0.001, cell2.touchedborder(3)
 				if(cell2.y>=this.w) cell2.y = this.w - 0.001, cell2.touchedborder(1)
 				if(oldx2 != cell2.x || oldy2 != cell2.y || cell2.dx || cell2.dy || massChanged){
-					this.active.add(cell2)
+					this.active.add(cell2), cell._nameid |= 131072
 					if(oldx2 >> minboxsize != cell2.x >> minboxsize || oldy2 >> minboxsize != cell2.y >> minboxsize || massChanged)
 						repos.push(cell2), rc.push(oldr2, oldy2, oldx2)
 				}
@@ -163,7 +163,7 @@ export class Arena{
 					this.remove(a)
 				}else this.repos(a, rc.pop(), rc.pop(), rc.pop())
 			}
-			if(!cell.tick(this) && !olddx && !olddy) this.active.delete(cell)
+			if(!cell.tick(this) && !olddx && !olddy) this.active.delete(cell), cell._nameid &= ~131072
 			if(!cell.m) cell.x = oldx, cell.y = oldy, cell.r = oldr, this.remove(cell)
 			else{
 				if(cell.x<0) cell.x=0, cell.touchedborder(2)
