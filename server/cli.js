@@ -117,7 +117,7 @@ export function say(...v){
 	packet.setUint8(0, 63)
 	packet.setUint8(1, l)
 	packet.setUint16(2, 0x0FFF)
-	packet8.set(sock.name, 4)
+	packet8.set(sername, 4)
 	const view = enc.encode(v.join(' '))
 	packet8.set(view, l += 4)
 	l += view.byteLength
