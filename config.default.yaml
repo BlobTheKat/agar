@@ -44,8 +44,7 @@ virus:
   splitmass: 200 # mass at which virus splits apart into 2
 
 mothervirus:
-  min: 0.05
-  spawn: 0.004
+  ratio: 0.2
   # mass starts as min and cannot go above max
   minmass: 200
   maxmass: 20000 # not vanilla but used as a safeguard anyway
