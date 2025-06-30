@@ -1,3 +1,4 @@
 config.yaml
 server/node_modules
 server/package-lock.json
+**/.DS_Store
