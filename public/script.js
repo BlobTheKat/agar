@@ -20,7 +20,8 @@ globalThis.connect = function connect(ip){
 	w.onclose = () => (ws=null,opened ? location.reload() : t = setTimeout(() => connect(ip), 10000))
 	w.onopen = () => {ws = w;if(autoplay)play()}
 }
-localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.canv.tk') ? 'blobk.at:9999' : (top.location.protocol == 'http:' ? 'ws://' : '') + top.location.hostname + ':37730')
+if(localStorage.ip == 'blobk.at:9999') delete localStorage.ip // clear old test server
+localStorage.ip = top.location.hash.slice(1) || localStorage.ip || (top.location.hostname.endsWith('.canv.tk') ? 'blobk.at:37730' : (top.location.protocol == 'http:' ? 'ws://' : '') + top.location.hostname + ':37730')
 for(const el of document.querySelectorAll('[key]')){ const key = el.getAttribute('key'), v = localStorage[key] || (localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value); if(el.type == 'checkbox')el.checked = !!+v;else el.value = v; el.addEventListener('input', e =>{localStorage[key] = el.type == 'checkbox' ? +el.checked : el.value}); el.onchange&&el.onchange() }
 globalThis.packet = new DataView(new ArrayBuffer(1024))
 const txt = new TextEncoder()
