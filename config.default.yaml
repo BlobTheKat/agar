@@ -26,7 +26,7 @@ zoomlimit: 10 # values > 1 allow zooming out more than the automatic zoom
 autoreset: 0 # Reset the map every ... seconds. 0 = disable
 
 food:
-  min: 250 # amount of food that will be spawned per 1000x1000 grid spaces
+  min: 25 # amount of food that will be spawned per 1000x1000 grid spaces
   max: 50 # amount of food not allowed to be more than this per 1000x1000 grid spaces
   spawn: 4 # how much food spawned per second per 1000x1000 grid spaces
   # mass chosen randomly between the two
