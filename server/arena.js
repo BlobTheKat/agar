@@ -33,7 +33,7 @@ export class Arena{
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li <= this.tl){
 			const a = this.clayers[li], b = x + y * w
-			a[b] ? a[b].push(cell) : (a[b] = [cell])
+			;(a[b] || (a[b] = new Set)).add(cell)
 			w = (w+1)>>1; x >>= 1; y >>= 1; li++
 		}
 		this.size++
@@ -49,16 +49,14 @@ export class Arena{
 		let w = -(-this.lw >> li), x = cell.x >> minboxsize + li, y = cell.y >> minboxsize + li
 		const a = this.xlayers[li], b = x + y * w
 		const s = a[b]
-		if(s){
-			s.remove(cell)
-			if(!s.length) a[b] = null
-		}
+		s.remove(cell)
+		if(!s.length) a[b] = null
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li <= this.tl){
 			const a = this.clayers[li++], b = x + y * w
 			const s = a[b]
-			s.remove(cell)
-			if(!s.length) a[b] = null
+			s.delete(cell)
+			if(!s.size) a[b] = null
 			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 		cell.m = cell.r = 0
@@ -80,8 +78,8 @@ export class Arena{
 		while(li < back){
 			const a = this.clayers[li++], b = x + y * w
 			const s = a[b]
-			s.remove(cell)
-			if(!s.length) a[b] = null
+			s.delete(cell)
+			if(!s.size) a[b] = null
 			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 		li = li2; w = -(-this.lw >> li)
@@ -93,7 +91,7 @@ export class Arena{
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
 		while(li < back){
 			const a = this.clayers[li++], b = x + y * w
-			a[b] ? a[b].push(cell) : (a[b] = [cell])
+			;(a[b] || (a[b] = new Set)).add(cell)
 			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 	}

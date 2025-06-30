@@ -39,11 +39,7 @@ wss.on('connection', (ws, {url}) => {
 	ws.send(packet)
 	ws.on('close', closed)
 	ws.on('message', message)
-	ws.on('pong', pong)
 })
-function pong(){
-	if(this.sock) this.sock.ping = performance.now() - 0
-}
 function closed(){
 	sockets.delete(this.sock)
 	this.sock.disconnected()

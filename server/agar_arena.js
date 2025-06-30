@@ -73,9 +73,9 @@ config(() => {
 	virusMin = den2val(virus.min); virusSpawn = den2val(virus.spawn)
 })
 
-let tps = 20, last = performance.now(), alast = last
+let tps = 20, last = performance.now()+1e6, alast = last
 setInterval(function tick(){
-	const now = performance.now()
+	const now = performance.now()+1e6
 	let dt = now - last
 	if(dt<50) return
 	last = max(last+50, now-200)
@@ -83,7 +83,7 @@ setInterval(function tick(){
 	if(sockets.size - arena.botCount - idlebots.length < 1) return
 	arena.tick()
 	const teams = (!!CONFIG.teams << 7) + (CONFIG.skins << 6)
-	if(!(arena.ticks % 30)){
+	if(!(arena.ticks % 40)){
 		i = 9
 		packet.setUint8(6, min(200, round(tps * 10)))
 		packet.setUint16(7, players.size)
@@ -94,19 +94,19 @@ setInterval(function tick(){
 			i += s.name.length
 			packet.setFloat32(i, s.score)
 			packet.setUint16(i + 4, s.id); i += 6
-			if(teams >> 7)packet.setUint16(i, s.kind), i += 2
+			if(teams >> 7) packet.setUint16(i, s.kind), i += 2
 		}
 		packet8[0] = 16
 		for(const sock of sockets){
 			if(!sock.ws)continue
 			if(sock.ping > 65535){
-				packet.setUint16(6, 0)
+				packet.setUint16(3, 0)
 				if(now - sock.ping > 30e3){
 					sock.ws.terminate()
 					sockets.delete(sock)
 					continue
 				}
-			}else packet.setUint16(3, sock.ping),sock.ping = now
+			}else packet.setUint16(3, sock.ping), sock.ping = now
 			packet.setUint16(1, sock.id)
 			packet.setUint8(5, teams + min(sock.spectated, 63))
 			sock.send(packet, i)

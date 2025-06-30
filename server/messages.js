@@ -45,7 +45,7 @@ export default Object.assign(Array.from({length:64},()=>null), {
 	},
 	33(sock){
 		if(sock.ping < 65536) return
-		sock.ping = Date.now() - sock.ping
+		sock.ping = performance.now()+1e6 - sock.ping
 	},
 	63(sock, view){
 		if(sock.cooldown(1000) || view.byteLength > 768) return
