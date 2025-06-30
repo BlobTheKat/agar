@@ -1,5 +1,3 @@
-import { EjectedMass } from "./cells/ejectedmass.js"
-import { Virus } from "./cells/virus.js"
 import { base_physics_box_size as minboxsize } from "./config.js"
 export class Arena{
 	constructor(w, h){

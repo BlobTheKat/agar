@@ -40,7 +40,7 @@ export class Cell{
 	draw(x, y, r){
 		const kind = this.kind >> 12
 		if(this.points){
-			let d = this.points.length - (staticshapes ? (r / 3) << 1 : Math.min(this.r / 3, r) << 1)
+			let d = this.points.length - (staticshapes ? Math.max(5, (r / 3)) << 1 : Math.min(this.r / 3, r) << 1)
 			if(d>0)while(d--)this.points.pop()
 			else while(d++)this.points.push(this.points[0] || 0)
 		}

@@ -44,7 +44,7 @@ export function bot(sock){
 		sock.dy = fdy *= d
 		d = 100 / sqrt(fsx * fsx + fsy * fsy)
 		fsx *= d; fsy *= d
-		if(fsx * fdx + fsy * fdy > 3000 && d < 400 / (sock.cells.length + 3)) sock.split()
+		if(fsx * fdx + fsy * fdy > 3000 && d < 250 / sock.cells.length) sock.split()
 	}
 	if(sock.score > arena.w * arena.h / 1000 && random() < .0002){
 		for(const c of sock.cells)

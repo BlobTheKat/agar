@@ -1,5 +1,5 @@
 import { sockets } from "./agar_arena.js"
-import { packet, packet8 } from "./util.js"
+import { packet, packet8, dec, escapeAnsi } from "./util.js"
 export default Object.assign(Array.from({length:64},()=>null), {
 	0(sock, view){
 		sock.dx = view.getInt16(0)
@@ -54,7 +54,9 @@ export default Object.assign(Array.from({length:64},()=>null), {
 		packet.setUint8(1, length)
 		packet.setUint16(2, sock.kind)
 		packet8.set(sock.name, 4)
-		packet8.set(new Uint8Array(view.buffer, view.byteOffset), length + 4)
+		const data = new Uint8Array(view.buffer, view.byteOffset)
+		packet8.set(data, length + 4)
 		for(const sock of sockets) if(sock.ws) sock.send(packet, length + view.byteLength + 4)
+		console.log(`\x1b[3;3${sock.kind>>11&1|sock.kind>>6&2|sock.kind>>1&4}m[${dec.decode(sock.name)||'unnamed'}] \x1b[m${escapeAnsi(dec.decode(data))}`)
 	}
 })

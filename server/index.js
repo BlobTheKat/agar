@@ -4,6 +4,7 @@ import YAML from 'yaml'
 import { promises as fs } from 'fs'
 import https from 'https'
 import path from 'path'
+
 const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
 globalThis.config = f => (fns.push(f),f())
@@ -16,7 +17,7 @@ Object.defineProperty(Array.prototype, 'remove', {value(value){
 	this.pop()
 }, enumerable: false, configurable: true})
 
-const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
+const { sockets, arena, messages, PlayerSocket, cmds, bans, players } = await import('./agar_arena.js')
 let wss
 if(CONFIG.key && CONFIG.cert){
 	const httpServer = https.createServer({key: await fs.readFile(path.join('..', CONFIG.key)), cert: await fs.readFile(path.join('..', CONFIG.cert))})

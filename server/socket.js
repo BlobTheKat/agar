@@ -1,8 +1,8 @@
-import { idlebots } from "./agar_arena.js";
-import { bot } from "./bot.js";
-import { EjectedMass } from "./cells/ejectedmass.js";
-import { PlayerCell } from "./cells/player.js";
-import { colors, packet } from "./util.js";
+import { idlebots } from "./agar_arena.js"
+import { bot } from "./bot.js"
+import { EjectedMass } from "./cells/ejectedmass.js"
+import { PlayerCell } from "./cells/player.js"
+import { colors, packet, dec } from "./util.js"
 const specname = Uint8Array.of(83, 112, 101, 99, 116, 97, 116, 111, 114) // "Spectator"
 export const players = new Map
 let speedexponent = 0, speed = 0
@@ -125,14 +125,20 @@ export class PlayerSocket{
 	disconnected(){
 		if(this.spectating) this.spectating.spectated--
 		if(!this.id) return
-		for(const cell of this.cells) cell.dx = cell.dy = 0, cell.kind=0x2666
+		for(const cell of this.cells) cell.dx = cell.dy = 0, cell.kind = 0x2666
 		setTimeout(rmcells, CONFIG.celltimeout * 1000, this)
+	}
+	setKind(kind){
+		if(this.spectating || this.kind == kind) return
+		this.kind = kind
+		for(const cell of this.cells) cell.kind = kind
 	}
 	died(menu = true){
 		this.name = specname
 		players.delete(this.id)
 		this.id = 0
 		this.score = 0
+		this.kind = 0
 		if(this.ws){
 			if(menu){
 				packet.setUint8(0, 2)
@@ -185,7 +191,6 @@ export class PlayerSocket{
 		const name = dec.decode(this.name).replace(/\W/g,"")||'unnamed'
 		return '\x1b[32m' + this.id + '\x1b[m: Player \x1b[90m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.length + '\x1b[m, score: \x1b[33m'+floor(this.score)+'\x1b[m)'
 	}
-	get name(){ return dec.decode(this.name) }
+	get textName(){ return dec.decode(this.name) }
 	get ip(){return this.ws._socket.remoteAddress}
 }
-export const dec = new TextDecoder()

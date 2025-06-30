@@ -2,7 +2,7 @@ import { Arena } from './arena.js'
 import { max_width, max_height } from './config.js'
 import { Food } from './cells/food.js'
 import { Virus } from './cells/virus.js'
-import { packet, packet8 } from './util.js'
+import { packet, packet8, enc } from './util.js'
 import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
 const safe = floor(packet.byteLength - 31)
@@ -24,7 +24,6 @@ function newbot(){
 	sockets.add(sock)
 	return sock
 }
-export const enc = new TextEncoder()
 const names = []
 let foodMin = 0, foodSpawn = 0
 let virusMin = 0, virusSpawn = 0
@@ -153,5 +152,5 @@ setInterval(function tick(){
 export const sockets = new Set
 export const bans = new Set
 export { default as messages } from './messages.js'
-export { PlayerSocket } from './socket.js'
+export { PlayerSocket, players } from './socket.js'
 export * as cmds from './cli.js'

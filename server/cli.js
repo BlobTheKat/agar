@@ -1,6 +1,5 @@
-import { sockets, bans, arena, enc } from "./agar_arena.js";
-import { dec } from "./socket.js";
-import { packet, packet8 } from "./util.js";
+import { sockets, bans, arena } from "./agar_arena.js"
+import { packet, packet8, enc, dec, escapeAnsi } from "./util.js"
 const DIE = Uint8Array.of(60)
 function find(player){
 	if(!player.match(/\D/)){
@@ -118,11 +117,12 @@ export function say(...v){
 	packet.setUint8(1, l)
 	packet.setUint16(2, 0x0FFF)
 	packet8.set(sername, 4)
-	const view = enc.encode(v.join(' '))
+	const view = enc.encode(v = v.join(' '))
 	packet8.set(view, l += 4)
 	l += view.byteLength
 	for(const sock of sockets)
 		if(sock.ws) sock.send(packet, l)
+	return '\x1b[3m[Server] \x1b[m'+escapeAnsi(v)
 }
 
 export const help = () => `\x1b[35mHelp\x1b[m:

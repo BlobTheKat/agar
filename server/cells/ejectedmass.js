@@ -1,5 +1,4 @@
 import { Cell } from "../cell.js"
-import { colors } from "../util.js"
 
 let solid = 0, cooldown = 0
 config(() => ({solid, cooldown} = CONFIG.eject))
