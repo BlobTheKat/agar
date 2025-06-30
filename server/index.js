@@ -7,6 +7,14 @@ const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
 globalThis.config = f => (fns.push(f),f())
 Object.defineProperties(globalThis, Object.getOwnPropertyDescriptors(Math))
+Object.defineProperty(Array.prototype, 'remove', {value(value){
+	let i = 0, l = this.length
+	for(;i < l;i++) if(this[i] == value) break
+	if(i == l) return
+	while(i < l) this[i] = this[++i]
+	this.pop()
+}, enumerable: false, configurable: true})
+
 const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
 let wss
 if(CONFIG.key && CONFIG.cert){
@@ -34,7 +42,7 @@ wss.on('connection', (ws, {url}) => {
 	ws.on('pong', pong)
 })
 function pong(){
-	if(this.sock) this.sock.ping = performance.now()
+	if(this.sock) this.sock.ping = performance.now() - 0
 }
 function closed(){
 	sockets.delete(this.sock)

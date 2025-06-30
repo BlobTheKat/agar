@@ -69,7 +69,7 @@ export default {
 			const cell = cells.get(id)
 			if(cell){
 				const s = layers[cell.tr]
-				if(s){s.delete(cell);if(!s.size)delete layers[cell.tr]}
+				if(s){ s.delete(cell);if(!s.size) delete layers[cell.tr]}
 			}
 			cells.delete(id)
 			const minicell = minimapNodes.get(id)
