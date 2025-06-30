@@ -3,11 +3,11 @@ import { MotherVirus } from "./cells/mothervirus.js"
 import { Virus } from "./cells/virus.js"
 let eat2 = 0, teams = false
 config(() => (eat2 = CONFIG.eatratio * 2, teams = !!CONFIG.teams))
-function bot1(cell, cell2, d2){
+function attraction(cell, cell2, d2){
 	if(teams && cell2.kind == cell.kind) return -0.1
 	const ratio = cell.m / cell2.m
 	if(ratio > 1){
-		if(cell2 instanceof Virus) return -100/d2
+		if(cell2 instanceof Virus) return -50/sqrt(d2)
 		if(ratio > 2) return 2/ratio
 		return ratio - 1
 	}else{
@@ -25,14 +25,13 @@ export function bot(sock){
 		arena.select(x - r, x + r, y - r, y + r, cell2 => {
 			if(cell2.sock == cell.sock) return
 			let ddx = cell2.x - x, ddy = cell2.y - y, d2 = max(1, ddx * ddx + ddy * ddy)
-			let attraction = bot1(cell, cell2, d2)
 			//if(attraction < 0.001 && attraction > -0.001)continue
 			//attraction between -1 and 1
-			const d = attraction * abs(attraction) / d2
+			const d = attraction(cell, cell2, d2) / d2
 			ddx *= d
 			ddy *= d
 			dx += ddx; dy += ddy
-			if(cell2.m * eat2 < cell.m && !(cell2 instanceof Food))sx += ddx, sy += ddy
+			if(cell2.m * eat2 < cell.m && !(cell2 instanceof Food)) sx += ddx, sy += ddy
 		})
 		fdx += dx * cell.m
 		fdy += dy * cell.m
@@ -45,7 +44,7 @@ export function bot(sock){
 		sock.dy = fdy *= d
 		d = 100 / sqrt(fsx * fsx + fsy * fsy)
 		fsx *= d; fsy *= d
-		if(fsx * fdx + fsy * fdy > 3000 && d < 400 / (sock.cells.length + 3))sock.split()
+		if(fsx * fdx + fsy * fdy > 3000 && d < 400 / (sock.cells.length + 3)) sock.split()
 	}
 	if(sock.score > arena.w * arena.h / 1000 && random() < .0002){
 		for(const c of sock.cells)

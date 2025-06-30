@@ -3,7 +3,7 @@ import { dec } from "./socket.js";
 import { packet, packet8 } from "./util.js";
 const DIE = Uint8Array.of(60)
 function find(player){
-	if(!player.match(/\D$/y)){
+	if(!player.match(/\D/)){
 		player = +player
 		for(const s of sockets)if(s.id == player) return s
 		throw "No player with ID "+player

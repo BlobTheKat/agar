@@ -50,7 +50,8 @@ export class PlayerSocket{
 	play(name){
 		if(players.size >= CONFIG.maxplayers) return this.spectate(0)
 		const teams = min(CONFIG.teams, colors.length)
-		if(this.spectating)this.spectating.spectated--,this.spectating = null
+		if(this.spectating)
+			this.spectating.spectated--, this.spectating = null
 		if(this.ws){
 			packet.setUint8(0, 1)
 			this.send(packet, 1)
@@ -73,7 +74,8 @@ export class PlayerSocket{
 	spectate(id){
 		this.z = 0.2
 		this.mz = 1
-		if(this.spectating = players.get(id) || null)this.spectating.spectated++
+		if(this.spectating = players.get(id) || null)
+			this.spectating.spectated++
 	}
 	control(){
 		if(this.spectating){
@@ -121,8 +123,8 @@ export class PlayerSocket{
 		this.z = min(.6, 10 / sqrt(r))
 	}
 	disconnected(){
+		if(this.spectating) this.spectating.spectated--
 		if(!this.id) return
-		if(this.spectating)this.spectating.spectated--
 		for(const cell of this.cells) cell.dx = cell.dy = 0, cell.kind=0x2666
 		setTimeout(rmcells, CONFIG.celltimeout * 1000, this)
 	}

@@ -19,7 +19,7 @@ export default Object.assign(Array.from({length:64},()=>null), {
 		if(sock.cells){
 			for(const c of sock.cells)
 				sock.arena.remove(c)
-			sock.cells.clear()
+			sock.cells.length = 0
 			sock.died(false)
 		}
 		sock.spectate(view.getUint16(0))

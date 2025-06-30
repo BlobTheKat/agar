@@ -34,7 +34,7 @@ globalThis.play = function(){
 	}
 	packet.setUint8(0, spectating ? 2 : 1)
 	let i = 1
-	if(spectating)packet.setUint16(1, spectating), i += 2
+	if(spectating) packet.setUint16(1, spectating), i += 2
 	else i += txt.encodeInto(localStorage.nick, new Uint8Array(packet.buffer, 1)).written
 	ws.send(new Uint8Array(packet.buffer, 0, i))
 }

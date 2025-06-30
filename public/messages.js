@@ -124,7 +124,7 @@ export default {
 		i = 0
 		if(teams)leaderboard.classList.add('teams')
 		else leaderboard.classList.remove('teams')
-		if(spectating && spectating != top)spectating = top, play()
+		if(spectating && spectating != top) spectating = top, play()
 		if(teams){
 			const [el] = leaderboard.children, gradients = []
 			let deg = 0
@@ -138,12 +138,14 @@ export default {
 			if(i == rows && mei >= rows && mei != lb.length){
 				s.textContent = mei + 1 + '. ' + (lb[mei] || 'An unnamed cell')
 				s.className = 'red'
+				s.onclick = null
 				i++
-			}else if(i == rows)s.textContent = s.className = ''
+			}else if(i == rows) s.textContent = s.className = '', s.onclick = null
 			else{
 				if(i > rows)s.textContent = ''
 				else s.textContent = lb[i] !== undefined ? i + 1 + '. ' + (lb[i] || 'An unnamed cell') : ''
 				s.className = i == mei ? 'red' : ''
+				s.onclick = null
 				i++
 			}
 		}
