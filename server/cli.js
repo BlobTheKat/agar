@@ -4,12 +4,15 @@ const DIE = Uint8Array.of(60)
 function find(player){
 	if(!player.match(/\D/)){
 		player = +player
-		for(const s of sockets)if(s.id == player) return s
+		for(const s of sockets)
+			if(s.id == player) return s
 		throw "No player with ID "+player
 	}else{
 		const results = []
 		const reg = new RegExp(player, 'yi')
-		for(const s of sockets)if(dec.decode(s.name).match(reg))results.push(s)
+		for(const s of sockets)
+			if(dec.decode(s.name).match(reg))
+				results.push(s)
 		if(results.length > 1) throw "Multiple players matching (use their ID instead):\n" + results.map(a=>a.debug()).join('\n')
 		if(!results.length) throw "No player matched the name "+player
 		return results[0]

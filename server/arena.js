@@ -129,8 +129,8 @@ export class Arena{
 			cell.y += cell.dy
 			cell.dx *= 1 - CONFIG.friction
 			cell.dy *= 1 - CONFIG.friction
-			if(abs(cell.dx) < 0.01)cell.dx = 0
-			if(abs(cell.dy) < 0.01)cell.dy = 0
+			if(abs(cell.dx) < 0.01) cell.dx = 0
+			if(abs(cell.dy) < 0.01) cell.dy = 0
 			this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r, cell2 => {
 				if(cell2 == cell) return
 				const dx = cell2.x - cell.x, dy = cell2.y - cell.y
@@ -140,13 +140,13 @@ export class Arena{
 				cell.touched(cell2, d, this)
 				if(!(cell2._nameid&131072)) cell2.touched(cell, d, this)
 				const massChanged = oldr2 * oldr2 < cell2.m * 100 || (oldr2 - 1) * (oldr2 - 1) >= cell2.m * 100
-				if(massChanged && cell2.m)cell2.r = ceil(sqrt(cell2.m) * 10)
+				if(massChanged && cell2.m) cell2.r = ceil(sqrt(cell2.m) * 10)
 				if(cell2.x<0) cell2.x = 0, cell2.touchedborder(2)
 				if(cell2.y<0) cell2.y = 0, cell2.touchedborder(0)
 				if(cell2.x>=this.w) cell2.x = this.w - 0.001, cell2.touchedborder(3)
 				if(cell2.y>=this.w) cell2.y = this.w - 0.001, cell2.touchedborder(1)
 				if(oldx2 != cell2.x || oldy2 != cell2.y || cell2.dx || cell2.dy || massChanged){
-					this.active.add(cell2), cell._nameid |= 131072
+					this.active.add(cell2), cell2._nameid |= 131072
 					if(oldx2 >> minboxsize != cell2.x >> minboxsize || oldy2 >> minboxsize != cell2.y >> minboxsize || massChanged)
 						repos.push(cell2), rc.push(oldr2, oldy2, oldx2)
 				}
