@@ -7,6 +7,7 @@ a(){
 	cd ..
 }
 [ -z "$1" ] || a $1
+[ ! -f config.yaml ] && cp config.default.yaml config.yaml
 cd server
 # install modules if they aren't already
 [ ! -d "node_modules" ] && npm i
