@@ -29,6 +29,7 @@ export class PlayerSocket{
 	cells = []
 	kind = 0
 	name = specname
+	shortName = ''
 	score = 0
 	id = 0
 	spectating = null
@@ -70,6 +71,7 @@ export class PlayerSocket{
 		this.cells.push(cell)
 		this.arena.add(cell)
 		this.name = name
+		this.shortName = dec.decode(name).replace(/\W/g,"").toLowerCase() || 'unnamed'
 	}
 	spectate(id){
 		this.z = 0.2
@@ -135,6 +137,7 @@ export class PlayerSocket{
 	}
 	died(menu = true){
 		this.name = specname
+		this.shortName = ''
 		players.delete(this.id)
 		this.id = 0
 		this.score = 0
@@ -188,9 +191,9 @@ export class PlayerSocket{
 		return this.cells.length ? 'Player(\x1b[33m'+this.cells.length+'\x1b[m) [...]' : 'Player []'
 	}
 	debug(){
-		const name = dec.decode(this.name).replace(/\W/g,"")||'unnamed'
-		return '\x1b[32m' + this.id + '\x1b[m: Player \x1b[90m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.length + '\x1b[m, score: \x1b[33m'+floor(this.score)+'\x1b[m)'
+		return '\x1b[32m' + this.id + '\x1b[m: Player \x1b[90m"'+this.shortName+'"\x1b[m (cells: \x1b[33m' + this.cells.length + '\x1b[m, score: \x1b[33m'+floor(this.score)+'\x1b[m)'
 	}
 	get textName(){ return dec.decode(this.name) }
+	set textName(a){ this.name = enc.encode(a); this.shortName = a.replace(/\W/g,"").toLowerCase() || 'unnamed' }
 	get ip(){return this.ws._socket.remoteAddress}
 }

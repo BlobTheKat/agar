@@ -1,5 +1,5 @@
 import { sockets, bans, arena } from "./agar_arena.js"
-import { packet, packet8, enc, dec, escapeAnsi } from "./util.js"
+import { packet, packet8, enc, escapeAnsi } from "./util.js"
 const DIE = Uint8Array.of(60)
 function find(player){
 	if(!player.match(/\D/)){
@@ -9,9 +9,8 @@ function find(player){
 		throw "No player with ID "+player
 	}else{
 		const results = []
-		const reg = new RegExp(player, 'yi')
 		for(const s of sockets)
-			if(dec.decode(s.name).match(reg))
+			if(s.shortName == player)
 				results.push(s)
 		if(results.length > 1) throw "Multiple players matching (use their ID instead):\n" + results.map(a=>a.debug()).join('\n')
 		if(!results.length) throw "No player matched the name "+player
