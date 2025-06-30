@@ -55,6 +55,6 @@ export default Object.assign(Array.from({length:64},()=>null), {
 		packet.setUint16(2, sock.kind)
 		packet8.set(sock.name, 4)
 		packet8.set(new Uint8Array(view.buffer, view.byteOffset), length + 4)
-		for(const sock of sockets)if(sock.ws)sock.send(packet, length + view.byteLength + 4)
+		for(const sock of sockets) if(sock.ws) sock.send(packet, length + view.byteLength + 4)
 	}
 })

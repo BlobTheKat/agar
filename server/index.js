@@ -3,6 +3,7 @@ import { repl } from 'basic-repl'
 import YAML from 'yaml'
 import { promises as fs } from 'fs'
 import https from 'https'
+import path from 'path'
 const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))
 globalThis.config = f => (fns.push(f),f())
@@ -18,7 +19,7 @@ Object.defineProperty(Array.prototype, 'remove', {value(value){
 const { sockets, arena, messages, PlayerSocket, cmds, bans } = await import('./agar_arena.js')
 let wss
 if(CONFIG.key && CONFIG.cert){
-	const httpServer = https.createServer({key: await fs.readFile(CONFIG.key), cert: await fs.readFile(CONFIG.cert)})
+	const httpServer = https.createServer({key: await fs.readFile(path.join('..', CONFIG.key)), cert: await fs.readFile(path.join('..', CONFIG.cert))})
 	wss = new WebSocketServer({server: httpServer})
 	httpServer.listen(CONFIG.port || 37730)
 }else wss = new WebSocketServer({port: CONFIG.port || 37730})
@@ -31,7 +32,6 @@ wss.on('connection', (ws, {url}) => {
 	sock.x = arena.w >> 1
 	sock.y = arena.h >> 1
 	ws.sock = sock
-	ws.pingd = -1
 	sockets.add(sock)
 	packet.setUint32(3, arena.w)
 	packet.setUint32(0, arena.h)

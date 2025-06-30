@@ -24,7 +24,7 @@ function newbot(){
 	sockets.add(sock)
 	return sock
 }
-const enc = new TextEncoder()
+export const enc = new TextEncoder()
 const names = []
 let foodMin = 0, foodSpawn = 0
 let virusMin = 0, virusSpawn = 0

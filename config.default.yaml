@@ -22,7 +22,7 @@ maxplayers: 128
 key:
 cert:
 celltimeout: 60 # delay before deleting cells from disconnected players
-zoomlimit: 10 # values > 1 allow zooming out more than the automatic zoom
+zoomlimit: 1 # values > 1 allow zooming out more than the automatic zoom
 autoreset: 0 # Reset the map every ... seconds. 0 = disable
 
 food:

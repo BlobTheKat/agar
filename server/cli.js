@@ -1,5 +1,6 @@
-import { sockets, bans, arena } from "./agar_arena.js";
+import { sockets, bans, arena, enc } from "./agar_arena.js";
 import { dec } from "./socket.js";
+import { packet, packet8 } from "./util.js";
 const DIE = Uint8Array.of(60)
 function find(player){
 	if(!player.match(/\D$/y)){
@@ -110,18 +111,32 @@ export function ban(p){
 export function pardon(ip){
 	return bans.delete(ip) ? '\x1b[32mPardonned :)\x1b[m' : '\x1b[33mIP wasn\'t banned :/\x1b[m'
 }
+const sername = Uint8Array.of(83, 101, 114, 118, 101, 114)
+export function say(...v){
+	let l = sername.length
+	packet.setUint8(0, 63)
+	packet.setUint8(1, l)
+	packet.setUint16(2, 0x0FFF)
+	packet8.set(sock.name, 4)
+	const view = enc.encode(v.join(' '))
+	packet8.set(view, l += 4)
+	l += view.byteLength
+	for(const sock of sockets)
+		if(sock.ws) sock.send(packet, l)
+}
+
 export const help = () => `\x1b[35mHelp\x1b[m:
-list \x1b[30m-- List online players\x1b[m
-feed \x1b[34m<player> \x1b[32m<mass> \x1b[30m-- Give mass to a player\x1b[m
-kill \x1b[34m<player> \x1b[30m-- Kill all of a player's cells\x1b[m
-merge \x1b[34m<player> \x1b[30m-- Allow a player's cells to merge\x1b[m
-tp \x1b[34m<player> \x1b[32m<x> <y> \x1b[30m-- Teleport player to (x, y)\x1b[m
-one \x1b[34m<player> \x1b[30m-- Kill all except one of player's cells\x1b[m
-penalty \x1b[34m<player> \x1b[32m<percent_per_second> \x1b[30m-- Make a player lose mass FAST (0 to disable)\x1b[m
-crazy \x1b[34m<player> \x1b[30m-- Inflate player's cells to quickly overtake the whole map
-kick \x1b[34m<player> \x1b[30m-- Kick a player from the game\x1b[m
-ban \x1b[34m<player> \x1b[30m-- Ban a player's IP from the game\x1b[m
-pardon \x1b[36m<ip> \x1b[30m-- Revoke an IP ban\x1b[m
-killall \x1b[30m-- Kill all players' cells\x1b[m
-reset \x1b[30m-- Remove all cells (including food & viruses)\x1b[m
-\x1b[30mhelp -- `+['???','help','take a wild guess','lol','this duh','unhelpful command','Unlocked at level 30','nani?!'][floor(random()*8)]
+list \x1b[90m-- List online players\x1b[m
+feed \x1b[34m<player> \x1b[32m<mass> \x1b[90m-- Give mass to a player\x1b[m
+kill \x1b[34m<player> \x1b[90m-- Kill all of a player's cells\x1b[m
+merge \x1b[34m<player> \x1b[90m-- Allow a player's cells to merge\x1b[m
+tp \x1b[34m<player> \x1b[32m<x> <y> \x1b[90m-- Teleport player to (x, y)\x1b[m
+one \x1b[34m<player> \x1b[90m-- Kill all except one of player's cells\x1b[m
+penalty \x1b[34m<player> \x1b[32m<percent_per_second> \x1b[90m-- Make a player lose mass FAST (0 to disable)\x1b[m
+crazy \x1b[34m<player> \x1b[90m-- Inflate player's cells to quickly overtake the whole map\x1b[m
+kick \x1b[34m<player> \x1b[90m-- Kick a player from the game\x1b[m
+ban \x1b[34m<player> \x1b[90m-- Ban a player's IP from the game\x1b[m
+pardon \x1b[36m<ip> \x1b[90m-- Revoke an IP ban\x1b[m
+killall \x1b[90m-- Kill all players' cells\x1b[m
+reset \x1b[90m-- Remove all cells (including food & viruses)\x1b[m
+help \x1b[90m-- `+['???','help','take a wild guess','lol','this duh','unhelpful command','Unlocked at level 30','nani?!'][floor(random()*8)]

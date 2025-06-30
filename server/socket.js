@@ -183,6 +183,7 @@ export class PlayerSocket{
 		const name = dec.decode(this.name).replace(/\W/g,"")||'unnamed'
 		return '\x1b[32m' + this.id + '\x1b[m: Player \x1b[90m"'+name+'"\x1b[m (cells: \x1b[33m' + this.cells.length + '\x1b[m, score: \x1b[33m'+floor(this.score)+'\x1b[m)'
 	}
+	get name(){ return dec.decode(this.name) }
 	get ip(){return this.ws._socket.remoteAddress}
 }
 export const dec = new TextDecoder()
