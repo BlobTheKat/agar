@@ -1,4 +1,4 @@
-import { MAX_PACKET_SIZE } from "./config.js"
+import { max_height, MAX_PACKET_SIZE, max_width } from "./config.js"
 
 export const colors = []
 for(let i = 0; i < 15; i++)
@@ -15,3 +15,7 @@ export const escapeAnsi = v => v.replace(/[\x00-\x1f\x7f]/g, ansiReplacer)
 
 export const dec = new TextDecoder()
 export const enc = new TextEncoder()
+
+export const arenaW = min(CONFIG.width, max_width)
+export const arenaH = min(CONFIG.height, max_height)
+export const arenaSize = arenaW * arenaH / 1e6

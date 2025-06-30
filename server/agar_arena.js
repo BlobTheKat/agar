@@ -2,7 +2,7 @@ import { Arena } from './arena.js'
 import { max_width, max_height } from './config.js'
 import { Food } from './cells/food.js'
 import { Virus } from './cells/virus.js'
-import { packet, packet8, enc } from './util.js'
+import { packet, packet8, enc, arenaSize, arenaH, arenaW } from './util.js'
 import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
 const safe = floor(packet.byteLength - 31)
@@ -60,16 +60,14 @@ export const arena = new class extends Arena{
 			super.add(f)
 		}
 	}
-}(min(CONFIG.width, max_width), min(CONFIG.height, max_height))
-
-const den2val = d => (+d || 0) * arena.w * arena.h / 1e6
+}(arenaW, arenaH)
 config(() => {
 	while(names.length) names.pop()
 	for(const n of CONFIG.bots.names) names.push(enc.encode(n))
 	if(!names.length) names.push('')
 	const {food, virus} = CONFIG
-	foodMin = den2val(food.min); foodSpawn = den2val(food.spawn)
-	virusMin = den2val(virus.min); virusSpawn = den2val(virus.spawn)
+	foodMin = (+food.min || 0) * arenaSize; foodSpawn = (+food.spawn || 0) * arenaSize
+	virusMin = (+virus.min || 0) * arenaSize; virusSpawn = (+virus.spawn || 0) * arenaSize
 })
 
 let tps = 20, last = performance.now()+1e6, alast = last
