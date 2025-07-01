@@ -7,7 +7,7 @@ config(() => ({minmass, maxmass, startmass, mergetime} = CONFIG.player,massdecay
 
 export class PlayerCell extends Cell{
 	constructor(x, y, sock, team = 0){
-		super(x, y, startmass, 0x2000 | (team || colors[floor(random() * 60)]))
+		super(x, y, startmass, 0x5000 | (team || colors[floor(random() * 60)]))
 		this.sock = sock
 		this.age = 0
 	}
@@ -41,9 +41,9 @@ export class PlayerCell extends Cell{
 		if(cell.sock == this.sock){
 			const minage = .5833 * min(cell.m, this.m) + mergetime
 			if(min(cell.age, this.age) < minage) return
+			if(cell.eaten(this, arena)) return
 			this.m += cell.m
 			cell.m = 0
-			cell.eaten(this, arena)
 			this.age += cell.age - mergetime
 			return
 		}

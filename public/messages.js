@@ -1,5 +1,5 @@
 import { t, x, y, z } from "./arena.js"
-import { Cell, colors, darkcolors } from "./cell.js"
+import { Cell, colors } from "./cell.js"
 let id = 0
 const txt = new TextDecoder()
 const players = new Map
@@ -44,8 +44,8 @@ export default {
 			cell.ty = y
 			cell.tr = r
 			cell.kind = kind
-			if(kind < 0x1000)cell.points = null
-			else if(!cell.points)cell.points = []
+			if(!(kind & 0x4000)) cell.points = null
+			else if(!cell.points) cell.points = []
 			cell.name = name
 			;(layers[r] || (layers[r] = new Set)).add(cell)
 			if(nid == id && id){

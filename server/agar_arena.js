@@ -5,6 +5,7 @@ import { Virus } from './cells/virus.js'
 import { packet, packet8, enc, arenaSize, arenaH, arenaW } from './util.js'
 import { MotherVirus } from './cells/mothervirus.js'
 import { PlayerSocket, players } from './socket.js'
+import { AttractorCell } from './cells/attractorcell.js'
 const safe = floor(packet.byteLength - 31)
 let i = 13
 function encode({x, y, r, kind, id, _nameid}){
@@ -35,6 +36,7 @@ export const arena = new class extends Arena{
 	players = 0
 	ejectedCount = 0
 	botCount = 0
+	attractorCount = 0
 	tillReset = +CONFIG.autoreset || 0
 	tick(){
 		super.tick()
@@ -57,6 +59,10 @@ export const arena = new class extends Arena{
 			const f = random() < r ?
 				new MotherVirus(super.randx(), super.randy())
 				: new Virus(super.randx(), super.randy())
+			super.add(f)
+		}
+		if(!this.attractorCount && CONFIG.attractor){
+			const f = new AttractorCell(this.w/2, this.h/2)
 			super.add(f)
 		}
 	}

@@ -39,6 +39,8 @@ requestAnimationFrame(function a(){
 	staticskins = !!+localStorage.ss
 	noshapes = !!+localStorage.nj
 	staticshapes = !!+localStorage.sj
+	contrast = +localStorage.dt ? '#fff' : '#000'
+
 	max = Math.max(innerWidth, innerHeight)*px
 	x0 = w*px - max/2; y0 = h*px - max/2
 	const dt = Math.min(.05, (Date.now() - last) / 1000)
@@ -50,7 +52,7 @@ requestAnimationFrame(function a(){
 		x += (t.x - x) * dt * 20; y += (t.y - y) * dt * 20
 		z *= (t.z * scale / z) ** (dt * 3)
 	}
-	if(!z)z = t.z || 1
+	if(!z) z = t.z || 1
 	const left = x * z - w, top = y * z - h
 	if(!+localStorage.ec){
 		arena.width = Math.round(innerWidth * px)
@@ -82,4 +84,5 @@ export let showskins = true
 export let staticskins = false
 export let noshapes = false
 export let staticshapes = false
+export let contrast = '#000'
 export let x0 = 0, y0 = 0, max = 1, px = 1

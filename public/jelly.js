@@ -1,4 +1,4 @@
-import { c, z } from "./arena.js"
+import { c, staticshapes, z } from "./arena.js"
 import { h, w } from "./messages.js"
 const PI2 = Math.PI * 2
 function jelltick(p, v, n, x, y){
@@ -7,53 +7,52 @@ function jelltick(p, v, n, x, y){
 	return p * 0.2 + n * 0.2 + v * 0.55 + Math.random() * 0.2 - 0.1
 }
 
-export function circle(x, y, r){
-	c.arc(x, y, r, 0, PI2)
-}
-export function jagged(x, y, r, cell){
-	const intensity = 1 + c.lineWidth / r / 2
-	let high = true
-	let spikes = cell.points.length
-	let i = spikes - 1
-	let cx = Math.sin(PI2 / spikes), cy = Math.cos(PI2 / spikes)
-	c.moveTo(x, y + r * intensity)
-	let ax = 0, ay = r
-	while(i--){
-		high = !high
-		let newy = ay * cy - ax * cx
-		ax = ax * cy + ay * cx
-		ay = newy
-		if(high)c.lineTo(x + ax * intensity, y + ay * intensity)
-		else c.lineTo(x + ax / intensity, y + ay / intensity)
-	}
-	c.closePath()
-}
 const MITER = 'miter', ROUND = 'round'
-export function jelly(x, y, r, cell, arg){
-	const {points, x: cellx, y: celly, r: cellr} = cell
-	let i = points.length, o = 0
-	if(i < 2) return circle(x, y, r)
-	const {lineWidth} = c
-	const rr = lineWidth / r, rz = 1 / r * cell.r
-	const min = Math.max(-cellr, -70) / rz / lineWidth
-	let cx = Math.sin(PI2 / i), cy = Math.cos(PI2 / i)
-	const first = points[0]
-	let f = Math.max(min, jelltick(points[i - 1], first, points[1], cellx, celly + cellr * (1 + first * rr)))
-	c.lineJoin = arg ? MITER : ROUND
-	const mul = arg?.5:1, mask = +arg
-	c.moveTo(x, y + r + lineWidth * f * mul)
-	let ax = 0, ay = r
-	while(--i){
-		const p = (1 + points[i] * rr) * rz
-		let v = Math.max(min, jelltick(i > 1 ? points[i - 1] : first, points[i], points[o], cellx + ax * p, celly + ay * p))
-		points[o] = f; f = v
-		o = ay * cy - ax * cx
-		ax = ax * cy + ay * cx
-		ay = o
-		v = 1 + (v*mul + (i&mask)) * rr
-		c.lineTo(x + ax * v, y + ay * v)
-		o = i
+export function cellpath(x, y, r, kind, cell){
+	const {lineWidth} = c, rr = lineWidth / r
+	let i = cell.expectedPoints
+	if(i < 10) return c.arc(x, y, r, 0, PI2)
+	const cx = Math.sin(PI2 / i), cy = Math.cos(PI2 / i)
+	const {points} = cell
+	const mask = kind>>3
+	c.lineJoin = mask ? MITER : ROUND
+	if(points){
+		// jelly
+		let d = points.length - i
+		if(d){
+			if(d>0) while(d--) points.pop()
+			else while(d++) points.push(points[0] || 0)
+		}
+		const {x: cellx, y: celly, r: cellr} = cell
+		let o = 0
+		const rz = cellr / r
+		const min = -Math.min(cellr, 70) / (rr * cellr)
+		const last = points[i-1]
+		let f = Math.max(min, jelltick(points[i - 1], points[0], points[1], cellx, celly + cellr * (1 + points[0] * rr)))
+		c.moveTo(x, y + r + lineWidth * f)
+		let ax = 0, ay = r
+		while(--i){
+			const p = (1 + points[i] * rr) * rz
+			let v = Math.max(min, jelltick(i >= 1 ? points[i - 1] : last, points[i], points[o], cellx + ax * p, celly + ay * p))
+			points[o] = f; f = v
+			o = ay * cy - ax * cx
+			ax = ax * cy + ay * cx
+			ay = o
+			v = 1 + (v + (i&mask)) * rr
+			c.lineTo(x + ax * v, y + ay * v)
+			o = i
+		}
+		points[1] = f
+	}else{
+		c.moveTo(x, y + r)
+		let ax = 0, ay = r
+		while(--i){
+			const o = ay * cy - ax * cx
+			ax = ax * cy + ay * cx
+			ay = o
+			const v = 1 + (i&mask) * rr
+			c.lineTo(x + ax * v, y + ay * v)
+		}
 	}
-	points[1] = f
 	c.closePath()
 }

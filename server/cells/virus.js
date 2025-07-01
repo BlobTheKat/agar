@@ -6,11 +6,10 @@ let minmass = 0, maxmass = 0, splitmass = 0, grow = 0, virusMax = 0, playerminma
 config(() => ({minmass, maxmass, splitmass, grow, max: virusMax} = CONFIG.virus, playerminmass=CONFIG.player.minmass))
 
 export class Virus extends Cell{
-	constructor(x, y, mass = floor(minmass + random() * (maxmass + 1 - minmass)), col = 0x12f1){
+	constructor(x, y, mass = floor(minmass + random() * (maxmass + 1 - minmass)), col = 0xd2f1){
 		super(x, y, mass, col)
 	}
-	added(arena){ arena.virusCount++
-	}
+	added(arena){ arena.virusCount++ }
 	removed(arena){ arena.virusCount-- }
 	eaten(cell){
 		if(cell instanceof PlayerCell){

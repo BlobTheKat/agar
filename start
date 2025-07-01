@@ -1,12 +1,7 @@
-a(){
-	#start live-server in public directory with specified port
-	cd public
-	npx static-server -p $1 >> /dev/null &
-	# save pid
+if [ ! -z "$1" ]; then
+	npx serve-repo public $1 1> /dev/null &
 	A=$!
-	cd ..
-}
-[ -z "$1" ] || a $1
+fi
 [ ! -f config.yaml ] && cp config.default.yaml config.yaml
 cd server
 # install modules if they aren't already

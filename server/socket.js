@@ -178,7 +178,7 @@ export class PlayerSocket{
 		for(const cell of this.cells){
 			if(cell.m < CONFIG.player.minmass + loss)continue
 			const fac = sqrt(cell.dx * cell.dx + cell.dy * cell.dy) || 1
-			const blob = new EjectedMass(cell.x + cell.dx * cell.r / fac, cell.y + cell.dy * cell.r / fac, CONFIG.eject.mass, cell.kind | 0x1000)
+			const blob = new EjectedMass(cell.x + cell.dx * cell.r / fac, cell.y + cell.dy * cell.r / fac, CONFIG.eject.mass, cell.kind)
 			cell.m -= loss
 			//TODO: spawn at surface
 			blob.dx = cell.dx * ejectspeed / fac + random() * ejectrand - ejectrand/2

@@ -18,10 +18,10 @@ export class Cell{
 	tick(){}
 	eat(cell, arena){
 		if(this.m < cell.m * CONFIG.eatratio) return 0
+		if(cell.eaten(this, arena)) return
 		const m = cell.m
 		this.m += m
 		cell.m = 0
-		cell.eaten(this, arena)
 		return m
 	}
 	eaten(){}
