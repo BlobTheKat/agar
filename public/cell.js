@@ -36,7 +36,7 @@ export class Cell{
 		this.r *= (this.tr / this.r) ** (dt * 6)
 		if(!this.r) this.r = this.tr || 100
 	}
-	get expectedPoints(){ return (staticshapes ? Math.max(10, this.r*z*.667) : this.r * Math.min(.667, z*4)) & -2 }
+	get expectedPoints(){ return (staticshapes ? Math.max(10, this.r*z*1.333) : this.r * Math.min(.667, z*4)) & -2 }
 	draw(x, y, r){
 		const kind = this.kind >> 12
 		c.beginPath()
