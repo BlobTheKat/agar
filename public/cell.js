@@ -61,7 +61,7 @@ export class Cell{
 			c.stroke()
 		}
 		let mo = 0
-		if(shownames && pattern === undefined){
+		if(shownames && pattern === undefined && this.name){
 			const font = Math.max(50 * px * z, r >> 1)
 			c.font = font + 'px agar'
 			c.fillStyle = colors[4095]
@@ -72,7 +72,7 @@ export class Cell{
 			c.lineWidth = l
 			mo = 1.4
 		}
-		if(this.r > 40 && showmass && kind == 2){
+		if(r > 15*px && showmass){
 			const t = '' + Math.floor(this.r * this.r / 100)
 			const font = Math.max(25 * px * z, r >> 2)
 			c.font = font + 'px agar'
@@ -80,7 +80,7 @@ export class Cell{
 			c.strokeStyle = colors[0]
 			const l = c.lineWidth
 			c.lineWidth = Math.ceil(font / 20)
-			c.fillText(t,x,y + font * mo), c.strokeText(t,x,y + font * mo)
+			c.fillText(t,x, y + font * mo), c.strokeText(t,x,y + font * mo)
 			c.lineWidth = l
 		}
 	}

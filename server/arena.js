@@ -25,7 +25,7 @@ export class Arena{
 	add(cell){
 		cell.r = ceil(sqrt(cell.m) * 10)
 		let li = min(this.tl, 32 - clz32(cell.r - 1 >> minboxsize))
-		let w = -(-this.lw >> li), x = cell.x >> minboxsize + li, y = cell.y >> minboxsize + li
+		let w = -(-this.lw >> li), x = min(max(0, cell.x >> minboxsize + li), w-1), y = min(max(0, cell.y >> minboxsize + li), -(-this.lh >> li)-1)
 		const a = this.xlayers[li], b = x + y * w
 		a[b] ? a[b].push(cell) : (a[b] = [cell])
 		if(!li) li = 1, w = (w+1)>>1, x >>= 1, y >>= 1
@@ -44,7 +44,7 @@ export class Arena{
 		cell.removed(this)
 		this.active.delete(cell), cell._nameid &= ~131072
 		let li = min(this.tl, 32 - clz32(cell.r - 1 >> minboxsize))
-		let w = -(-this.lw >> li), x = cell.x >> minboxsize + li, y = cell.y >> minboxsize + li
+		let w = -(-this.lw >> li), x = min(max(0, cell.x >> minboxsize + li), w-1), y = min(max(0, cell.y >> minboxsize + li), -(-this.lh >> li)-1)
 		const a = this.xlayers[li], b = x + y * w
 		const s = a[b]
 		s.remove(cell)
@@ -64,8 +64,8 @@ export class Arena{
 		const li2 = min(this.tl, 32 - clz32(cell.r - 1 >> minboxsize))
 		const back = max(li,li2,min(this.tl + 1, 32 - min(clz32(oldx ^ cell.x), clz32(oldy ^ cell.y)) - minboxsize))
 		if(li == li2 && li == back) return
-		let x = oldx >> minboxsize + li, y = oldy >> minboxsize + li
 		let w = -(-this.lw >> li)
+		let x = min(max(0, oldx >> minboxsize + li), w-1), y = min(max(0, oldy >> minboxsize + li), -(-this.lh >> li)-1)
 		{
 			const a = this.xlayers[li], b = x + y * w
 			const s = a[b]
@@ -81,7 +81,7 @@ export class Arena{
 			w = (w+1)>>1; x >>= 1; y >>= 1
 		}
 		li = li2; w = -(-this.lw >> li)
-		x = cell.x >> minboxsize + li; y = cell.y >> minboxsize + li
+		x = min(max(0, cell.x >> minboxsize + li), w-1); y = min(max(0, cell.y >> minboxsize + li), -(-this.lh >> li)-1)
 		{
 			const a = this.xlayers[li], b = x + y * w
 			a[b] ? a[b].push(cell) : (a[b] = [cell])
