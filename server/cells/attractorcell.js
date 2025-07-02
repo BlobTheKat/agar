@@ -17,7 +17,7 @@ export class AttractorCell extends Cell{
 	tick(arena){
 		const sqrtr = sqrt(this.r)
 		if(this.m > maxmass*4) this.m = maxmass*4
-		else if(this.m - take >= minmass) for(let i = foodspawn; i > 0; i--){
+		else if(this.m - take >= minmass) for(let i = foodspawn * this.r * .01; i > 0; i--){
 			if(this.m - take < minmass) break
 			const th = random() * PI * 2
 			const x = sin(th), y = cos(th)
@@ -41,6 +41,7 @@ export class AttractorCell extends Cell{
 			}
 			const acc = min(0, (ir4-1/d2)*5)*force
 			cell.dx += (dx+dy)*acc; cell.dy += (dy-dx)*acc
+			cell.dx *= 0.99; cell.dy *= 0.99
 		})
 		return true
 	}
