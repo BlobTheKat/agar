@@ -24,8 +24,8 @@ export class AttractorCell extends Cell{
 			this.m -= take
 			if(arena.foodCount >= maxfood) continue
 			const c = new Food(this.x + x * this.r, this.y + y * this.r, foodmass)
-			c.dx = (x-y) * sqrtr
-			c.dy = (y+x) * sqrtr
+			c.dx = (x-y) * sqrtr * .5
+			c.dy = (y+x) * sqrtr * .5
 			arena.add(c)
 		}
 		const r4 = this.r*4, ir4 = 1/(r4*r4), minsuckmass = this.m/CONFIG.eatratio
