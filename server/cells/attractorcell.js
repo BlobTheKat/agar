@@ -39,7 +39,7 @@ export class AttractorCell extends Cell{
 				cell.m = nm
 				this.m += foodspawn * foodmass * 2
 			}
-			const acc = min(0, (ir4-1/d2)*5)*force
+			const acc = min(0, (ir4-1/d2))*force*(cell instanceof Food ? 2.5 : 5)
 			cell.dx += (dx+dy)*acc; cell.dy += (dy-dx)*acc
 			cell.dx *= 0.99; cell.dy *= 0.99
 		})
