@@ -91,7 +91,7 @@ setInterval(function tick(){
 		packet.setUint8(6, min(200, round(tps * 10)))
 		packet.setUint16(7, players.size)
 		for(const s of sockets){
-			if(!s.score)continue
+			if(!s.score) continue
 			packet.setUint8(i, s.name.length)
 			packet8.set(s.name, ++i)
 			i += s.name.length
@@ -101,7 +101,7 @@ setInterval(function tick(){
 		}
 		packet8[0] = 16
 		for(const sock of sockets){
-			if(!sock.ws)continue
+			if(!sock.ws) continue
 			if(sock.ping > 65535){
 				packet.setUint16(3, 0)
 				if(now - sock.ping > 30e3){

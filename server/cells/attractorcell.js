@@ -32,8 +32,8 @@ export class AttractorCell extends Cell{
 		const force = this.r
 		arena.select(this.x - r4, this.x + r4, this.y - r4, this.y + r4, cell => {
 			if(cell instanceof AttractorCell) return
-			const dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy
-			if(cell instanceof PlayerCell && cell.m >= minsuckmass && d2 < (this.r*.6667+cell.r)*(this.r*.6667+cell.r)){
+			const dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy, d = sqrt(d2)
+			if(cell instanceof PlayerCell && cell.m >= minsuckmass && d < this.r*.6667+cell.r){
 				const nm = cell.m - foodspawn * foodmass * 4
 				if(nm < CONFIG.player.minmass) return
 				cell.m = nm
@@ -41,7 +41,7 @@ export class AttractorCell extends Cell{
 			}
 			const acc = min(0, (ir4-1/d2))*force*(cell instanceof Food ? 2.5 : 5)
 			cell.dx += (dx+dy)*acc; cell.dy += (dy-dx)*acc
-			cell.dx *= 0.99; cell.dy *= 0.99
+			cell.dx *= .95; cell.dy *= .95
 		})
 		return true
 	}
