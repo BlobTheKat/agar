@@ -110,7 +110,7 @@ setInterval(function tick(){
 					continue
 				}
 			}else packet.setUint16(3, sock.ping), sock.ping = now
-			packet.setUint16(1, sock.id)
+			packet.setUint16(1, sock.spectating ? sock.spectating.id : sock.id)
 			packet.setUint8(5, teams + min(sock.spectated, 63))
 			sock.send(packet, i)
 		}

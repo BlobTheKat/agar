@@ -107,13 +107,13 @@ export default {
 					scores[0] = score
 					top = sid
 				}
-				if(sid == id)sel.textContent = 'Score: ' + Math.floor(score)
+				if(sid == id) sel.textContent = 'Score: ' + Math.floor(score)
 				lb[kind] = (lb[kind] || 0) + score
 				scores[1] += score
 			}else{
 				let j = scores.findIndex(a => a < score)
 				if(j == -1)j = scores.length
-				if(sid == id)mei = j, sel.textContent = 'Score: ' + Math.floor(score)
+				if(sid == id) mei = j, sel.textContent = 'Score: ' + Math.floor(score)
 				else if(j <= mei)mei++
 				if(!j)top = sid
 				scores.splice(j, 0, score)
@@ -124,7 +124,7 @@ export default {
 		i = 0
 		if(teams)leaderboard.classList.add('teams')
 		else leaderboard.classList.remove('teams')
-		if(spectating && spectating != top) spectating = top, play()
+		if(spectating && spectating != top|65536) spectating = top|65536, play()
 		if(teams){
 			const [el] = leaderboard.children, gradients = []
 			let deg = 0
