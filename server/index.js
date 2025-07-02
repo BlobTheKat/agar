@@ -4,6 +4,13 @@ import YAML from 'yaml'
 import { promises as fs } from 'fs'
 import https from 'https'
 import path from 'path'
+import { Food } from './cells/food.js'
+import { MotherVirus } from './cells/mothervirus.js'
+import { Virus } from './cells/virus.js'
+import { PlayerCell } from './cells/player.js'
+import { EjectedMass } from './cells/ejectedmass.js'
+import { AttractorCell } from './cells/attractorcell.js'
+
 
 const fns = []
 globalThis.CONFIG = YAML.parse(''+await fs.readFile('../config.yaml'))

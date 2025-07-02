@@ -2,7 +2,7 @@ import { idlebots } from "./agar_arena.js"
 import { bot } from "./bot.js"
 import { EjectedMass } from "./cells/ejectedmass.js"
 import { PlayerCell } from "./cells/player.js"
-import { colors, packet, dec } from "./util.js"
+import { colors, packet, dec, enc } from "./util.js"
 const specname = Uint8Array.of(83, 112, 101, 99, 116, 97, 116, 111, 114) // "Spectator"
 export const players = new Map
 let speedexponent = 0, speed = 0
@@ -127,7 +127,7 @@ export class PlayerSocket{
 	disconnected(){
 		if(this.spectating) this.spectating.spectated--
 		if(!this.id) return
-		for(const cell of this.cells) cell.dx = cell.dy = 0, cell.kind = 0x2666
+		for(const cell of this.cells) cell.dx = cell.dy = 0, cell.kind = 0x5666
 		setTimeout(rmcells, CONFIG.celltimeout * 1000, this)
 	}
 	setKind(kind){
