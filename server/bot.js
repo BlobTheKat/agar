@@ -7,7 +7,7 @@ function attraction(cell, cell2, d2){
 	if(teams && cell2.kind == cell.kind) return -0.1
 	const ratio = cell.m / cell2.m
 	if(ratio > 1){
-		if(cell2 instanceof Virus) return -50/sqrt(d2)
+		if(cell2 instanceof Virus) return -50/(sqrt(d2)-cell2.r+100)
 		if(ratio > 2) return 2/ratio
 		return ratio - 1
 	}else{

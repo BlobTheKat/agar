@@ -1,6 +1,7 @@
 import { Cell } from "../cell.js"
 import { arenaSize } from "../util.js"
 import { Food } from "./food.js"
+import { MotherVirus } from "./mothervirus.js"
 import { PlayerCell } from "./player.js"
 
 let foodmass = 0, minmass = 0, maxmass = 0, foodspawn = 0, efficiency = 0, maxfood = 0, take = 0
@@ -32,15 +33,18 @@ export class AttractorCell extends Cell{
 		const force = this.r
 		arena.select(this.x - r4, this.x + r4, this.y - r4, this.y + r4, cell => {
 			if(cell instanceof AttractorCell) return
-			const dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy, d = sqrt(d2)
+			let dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy, d = sqrt(d2)
 			if(cell instanceof PlayerCell && cell.m >= minsuckmass && d < this.r*.6667+cell.r){
 				const nm = cell.m - foodspawn * foodmass * 4
 				if(nm < CONFIG.player.minmass) return
 				cell.m = nm
 				this.m += foodspawn * foodmass * 2
 			}
+			if(!(cell instanceof MotherVirus)){
+				const odx = dx; dx += dy; dy -= odx
+			}
 			const acc = min(0, (ir4-1/d2))*force*(cell instanceof Food ? 2.5 : 5)
-			cell.dx += (dx+dy)*acc; cell.dy += (dy-dx)*acc
+			cell.dx += dx*acc; cell.dy += dy*acc
 		})
 		return true
 	}
