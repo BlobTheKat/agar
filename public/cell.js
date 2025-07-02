@@ -19,7 +19,7 @@ for(let r = 0; r < 16; r++)
 	for(let g = 0; g < 16; g++)
 		for(let b = 0; b < 16; b++)
 		colors.push('#' + hex[r + 1] + hex[g + 1] + hex[b + 1]),
-		darkcolors.push('#' + hex[r] + hex[g] + hex[b])
+		darkcolors.push(r+g+b < 10 ? '#' + hex[r+2] + hex[g+2] + hex[b+2] : '#' + hex[r] + hex[g] + hex[b])
 darkcolors.push(...colors)
 
 export class Cell{
