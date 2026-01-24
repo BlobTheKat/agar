@@ -1,10 +1,10 @@
 import { c, staticshapes, z } from "./arena.js"
 import { h, w } from "./messages.js"
 const PI2 = Math.PI * 2
-function jelltick(p, v, n, x, y){
+function jelltick(prev, val, next, x, y){
 	const corr = Math.max(-y, -x, x - w, y - h) / 100 - .2
-	if(corr > 0) return p * 0.1 + n * 0.1 + v * 0.8 + Math.random() * 0.1 - 0.05 - corr
-	return p * 0.2 + n * 0.2 + v * 0.55 + Math.random() * 0.2 - 0.1
+	if(corr > 0) return prev * 0.1 + next * 0.1 + val * 0.8 + Math.random() * 0.1 - 0.05 - corr
+	return prev * 0.2 + val * 0.55 + next * 0.2 + Math.random() * 0.2 - 0.1
 }
 
 const MITER = 'miter', ROUND = 'round'
