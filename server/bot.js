@@ -22,7 +22,7 @@ export function bot(sock){
 	for(const cell of sock.cells){
 		const x = cell.x, y = cell.y, r = cell.r + 500
 		let dx = 0, dy = 0, sx = 0, sy = 0
-		arena.select(x - r, x + r, y - r, y + r, cell2 => {
+		arena.select(x, y, r, cell2 => {
 			if(cell2.sock == cell.sock) return
 			let ddx = cell2.x - x, ddy = cell2.y - y, d2 = max(1, ddx * ddx + ddy * ddy)
 			//if(attraction < 0.001 && attraction > -0.001) continue

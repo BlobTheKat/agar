@@ -123,8 +123,7 @@ setInterval(function tick(){
 		const rw = sock.rw / sock.z * sock.mz, rh = sock.rh / sock.z * sock.mz
 		const {x, y} = sock
 		for(const cell of a) cell._nameid &= ~65536
-		arena.select(x-rw, x+rw, y-rh, y+rh, cell => {
-			if(abs(cell.x - x) - cell.r > rw || abs(cell.y - y) - cell.r > rh) return
+		arena.selectRect(x-rw, x+rw, y-rh, y+rh, cell => {
 			sock.cached2.push(cell)
 			const n = cell._nameid; cell._nameid = n | 65536
 			if(n&196608) encode(cell) || sock.cached2.pop()

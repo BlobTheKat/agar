@@ -7,6 +7,6 @@ cd server
 # install modules if they aren't already
 [ ! -d "node_modules" ] && npm i
 # the server
-node .
+node --inspect .
 # kill live-server
 [ -z "$A" ] || kill -9 $A

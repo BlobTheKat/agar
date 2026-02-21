@@ -96,8 +96,8 @@ export class Arena{
 	[Symbol.for('nodejs.util.inspect.custom')](){
 		return this.size ? 'Arena(\x1b[33m'+this.size+'\x1b[m) [...]' : 'Arena []'
 	}
-	select(x0, x1, y0, y1, cb){
-		let li = min(this.tl, 32 - clz32(x1 - x0 + y1 - y0 - .1 >> minboxsize + 3))
+	selectRect(x0, x1, y0, y1, cb){
+		let li = min(this.tl, 32 - clz32(y1-y0 + x1-x0 - .1 >> minboxsize + 3))
 		let w = -(-this.lw >> li), h = -(-this.lh >> li)
 		let sx = max(0, (x0 >> minboxsize + li) - 1), ex = min(w, -(-x1 >> minboxsize + li) + 1)
 		let sy = max(0, (y0 >> minboxsize + li) - 1), ey = min(h, -(-y1 >> minboxsize + li) + 1)
@@ -106,7 +106,10 @@ export class Arena{
 			const l = this.clayers[li++]
 			for(let y = sy * w; y < eyw; y += w) for(let x = sx; x < ex; x++){
 				const s = l[x + y]
-				if(s) for(const i of s) if(cb(i)) return
+				if(s) for(const c of s){
+					const {x,y,r} = c
+					if(x+r>=x0&&x-r<=x1&&y+r>=y0&&y-r<=y1) cb(c)
+				}
 			}
 		}else w<<=1,h<<=1, sx=(sx<<1)+1, sy=(sy<<1)+1, ex=(ex<<1)-2, ey=(ey<<1)-2
 		while(li <= this.tl){
@@ -115,9 +118,44 @@ export class Arena{
 			sx = sx ? sx - 1 >> 1 : 0; sy = sy ? sy - 1 >> 1 : 0
 			ex = min(ex + 2 >> 1, w); ey = min(ey + 2 >> 1, h)
 			eyw = ey * w
-			for(let y = sy * w;y < eyw; y += w)for(let x = sx;x < ex;x++){
+			for(let y = sy * w;y < eyw; y += w) for(let x = sx;x < ex;x++){
 				const s = l[x + y]
-				if(s) for(const i of s) if(cb(i)) return
+				if(s) for(let l=s.length; l--; ){
+					const c = s[l], {x,y,r} = c
+					if(x+r>=x0&&x-r<=x1&&y+r>=y0&&y-r<=y1) cb(c)
+				}
+			}
+		}
+	}
+	select(cx, cy, r, cb){
+		let li = min(this.tl, 32 - clz32(r + r - .1 >> minboxsize + 3))
+		let w = -(-this.lw >> li), h = -(-this.lh >> li)
+		let sx = max(0, (cx-r >> minboxsize + li) - 1), ex = min(w, -(-cx-r >> minboxsize + li) + 1)
+		let sy = max(0, (cy-r >> minboxsize + li) - 1), ey = min(h, -(-cy-r >> minboxsize + li) + 1)
+		let eyw = ey * w
+		if(li){
+			const l = this.clayers[li++]
+			for(let y = sy * w; y < eyw; y += w) for(let x = sx; x < ex; x++){
+				const s = l[x + y]
+				if(s) for(const c of s){
+					const dx = c.x - cx, dy = c.y - cy, d2 = dx*dx+dy*dy, thr = r+c.r
+					if(d2<=thr*thr && cb(c, sqrt(d2))) return
+				}
+			}
+		}else w<<=1,h<<=1, sx=(sx<<1)+1, sy=(sy<<1)+1, ex=(ex<<1)-2, ey=(ey<<1)-2
+		while(li <= this.tl){
+			const l = this.xlayers[li++]
+			w = w + 1 >> 1; h = h + 1 >> 1
+			sx = sx ? sx - 1 >> 1 : 0; sy = sy ? sy - 1 >> 1 : 0
+			ex = min(ex + 2 >> 1, w); ey = min(ey + 2 >> 1, h)
+			eyw = ey * w
+			for(let y = sy * w;y < eyw; y += w) for(let x = sx;x < ex;x++){
+				const s = l[x + y]
+				if(s) for(let l=s.length; l--; ){
+					const c = s[l]
+					const dx = c.x - cx, dy = c.y - cy, d2 = dx*dx+dy*dy, thr = r+c.r
+					if(d2<=thr*thr && cb(c, sqrt(d2))) return
+				}
 			}
 		}
 	}
@@ -131,11 +169,9 @@ export class Arena{
 			cell.dy *= 1 - CONFIG.friction
 			if(abs(cell.dx) < 0.01) cell.dx = 0
 			if(abs(cell.dy) < 0.01) cell.dy = 0
-			this.select(cell.x - cell.r, cell.x + cell.r, cell.y - cell.r, cell.y + cell.r, cell2 => {
+
+			this.select(cell.x, cell.y, cell.r, (cell2, d) => {
 				if(cell2 == cell) return
-				const dx = cell2.x - cell.x, dy = cell2.y - cell.y
-				const d = sqrt(dx * dx + dy * dy)
-				if(d > cell.r + cell2.r) return
 				const {x: oldx2, y: oldy2, r: oldr2} = cell2
 				cell.touched(cell2, d, this)
 				if(!(cell2._nameid&131072)) cell2.touched(cell, d, this)
@@ -177,6 +213,6 @@ export class Arena{
 	}
 	randx(){ return floor(random() * this.w) }
 	randy(){ return floor(random() * this.h) }
-	reset(){ this.select(0,this.w,0,this.h, cell => this.remove(cell)) }
+	reset(){ this.selectRect(0, this.w, 0, this.h, cell => this.remove(cell)) }
 }
 const repos = [], rc = []

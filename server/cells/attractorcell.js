@@ -35,7 +35,7 @@ export class AttractorCell extends Cell{
 		}
 		const r4 = this.r*4, ir4 = 1/(r4*r4), minsuckmass = this.m/CONFIG.eatratio
 		const force = this.r
-		arena.select(this.x - r4, this.x + r4, this.y - r4, this.y + r4, cell => {
+		arena.select(this.x, this.y, r4, cell => {
 			if(cell instanceof AttractorCell) return
 			let dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy, d = sqrt(d2)
 			if(cell instanceof PlayerCell && cell.m >= minsuckmass && d < this.r*.6667+cell.r){
