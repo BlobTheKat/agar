@@ -43,7 +43,7 @@ export function kill(p){
 }
 export function crazy(p){
 	const sock = find(p);
-	while(sock.newcell(arena.randx(), arena.randy(), 1));
+	while(sock.newCell(arena.randx(), arena.randy(), 1));
 	for(const cell of sock.cells){
 		cell.m += random() * arena.w * arena.h / 200 / CONFIG.player.maxcells
 	}

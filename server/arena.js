@@ -141,10 +141,10 @@ export class Arena{
 				if(!(cell2._nameid&131072)) cell2.touched(cell, d, this)
 				const massChanged = oldr2 * oldr2 < cell2.m * 100 || (oldr2 - 1) * (oldr2 - 1) >= cell2.m * 100
 				if(massChanged && cell2.m) cell2.r = ceil(sqrt(cell2.m) * 10)
-				if(cell2.x<0) cell2.x = 0, cell2.touchedborder(2)
-				if(cell2.y<0) cell2.y = 0, cell2.touchedborder(0)
-				if(cell2.x>=this.w) cell2.x = this.w - 0.001, cell2.touchedborder(3)
-				if(cell2.y>=this.w) cell2.y = this.w - 0.001, cell2.touchedborder(1)
+				if(cell2.x<0) cell2.x = 0, cell2.touchedBorder(2)
+				if(cell2.y<0) cell2.y = 0, cell2.touchedBorder(0)
+				if(cell2.x>=this.w) cell2.x = this.w - 0.001, cell2.touchedBorder(3)
+				if(cell2.y>=this.w) cell2.y = this.w - 0.001, cell2.touchedBorder(1)
 				if(oldx2 != cell2.x || oldy2 != cell2.y || cell2.dx || cell2.dy || massChanged){
 					this.active.add(cell2), cell2._nameid |= 131072
 					if(oldx2 >> minboxsize != cell2.x >> minboxsize || oldy2 >> minboxsize != cell2.y >> minboxsize || massChanged)
@@ -162,16 +162,16 @@ export class Arena{
 			if(!cell.tick(this) && !olddx && !olddy) this.active.delete(cell), cell._nameid &= ~131072
 			if(!cell.m) cell.x = oldx, cell.y = oldy, cell.r = oldr, this.remove(cell)
 			else{
-				if(cell.x<0) cell.x=0, cell.touchedborder(2)
-				if(cell.y<0) cell.y=0, cell.touchedborder(0)
-				if(cell.x >= this.w) cell.x = this.w - 1, cell.touchedborder(3)
-				if(cell.y >= this.h) cell.y = this.h - 1, cell.touchedborder(1)
+				if(cell.x<0) cell.x=0, cell.touchedBorder(2)
+				if(cell.y<0) cell.y=0, cell.touchedBorder(0)
+				if(cell.x >= this.w) cell.x = this.w - 1, cell.touchedBorder(3)
+				if(cell.y >= this.h) cell.y = this.h - 1, cell.touchedBorder(1)
 				const massChanged = oldr * oldr < cell.m * 100 || (oldr - 1) * (oldr - 1) >= cell.m * 100
 				if(massChanged) cell.r = ceil(sqrt(cell.m) * 10)
 				if(oldx >> minboxsize != cell.x >> minboxsize || oldy >> minboxsize != cell.y >> minboxsize || massChanged)
 					this.repos(cell, oldx, oldy, oldr)
 			}
-			if(!--t)break
+			if(!--t) break
 		}
 		this.ticks++
 	}

@@ -38,7 +38,7 @@ export class Cell{
 		this.x += (this.x - cell.x) * fac
 		this.y += (this.y - cell.y) * fac
 	}
-	touchedborder(a){
+	touchedBorder(a){
 		if(a < 2) this.dy *= -1
 		else this.dx *= -1
 	}

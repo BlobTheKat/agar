@@ -9,4 +9,4 @@ cd server
 # the server
 node .
 # kill live-server
-[ -z "$A" ] || kill $A
+[ -z "$A" ] || kill -9 $A

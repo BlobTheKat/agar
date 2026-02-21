@@ -2,11 +2,18 @@ import { Cell } from "../cell.js"
 import { EjectedMass } from "./ejectedmass.js"
 import { PlayerCell } from "./player.js"
 
-let minmass = 0, maxmass = 0, splitmass = 0, grow = 0, virusMax = 0, playerminmass = 0
-config(() => ({minmass, maxmass, splitmass, grow, max: virusMax} = CONFIG.virus, playerminmass=CONFIG.player.minmass))
+let minMass = 0, massRange = 0, splitMass = 0, grow = 0, virusMax = 0, playerMinMass = 0
+config(() => {
+	minMass = CONFIG.virus.minmass
+	massRange = CONFIG.virus.maxmass+1 - minMass
+	virusMax = CONFIG.virus.max
+	grow = CONFIG.virus.grow
+	splitMass = CONFIG.virus.splitmass
+	playerMinMass = CONFIG.player.minmass
+})
 
 export class Virus extends Cell{
-	constructor(x, y, mass = floor(minmass + random() * (maxmass + 1 - minmass)), col = 0xd2f1){
+	constructor(x, y, mass = floor(minMass + random() * massRange), col = 0xd2f1){
 		super(x, y, mass, col)
 	}
 	added(arena){ arena.virusCount++ }
@@ -17,14 +24,14 @@ export class Virus extends Cell{
 			let mass = m
 			cell.age = 20
 			while(true){
-				if(cell.m - mass < playerminmass) break
-				const c = cell.sock.newcell(cell.x, cell.y, mass)
+				if(cell.m - mass < playerMinMass) break
+				const c = cell.sock.newCell(cell.x, cell.y, mass)
 				if(!c) break
 				cell.m -= mass
 				const th = random() * PI * 2
 				c.dx = sin(th) * 20
 				c.dy = cos(th) * 20
-				mass = max(playerminmass, min(cell.m - playerminmass, mass / 1.5))
+				mass = max(playerMinMass, min(cell.m - playerMinMass, mass / 1.5))
 			}
 		}
 	}
@@ -39,15 +46,15 @@ export class Virus extends Cell{
 				this.dy = (this.dy + cell.dy * d) * 0.8
 				return
 			}
-			if(this.m > splitmass){
-				this.m = minmass
+			if(this.m > splitMass){
+				this.m = minMass
 				if(arena.virusCount >= max) return
-				const double = new Virus(this.x, this.y)
-				arena.add(double)
+				const clone = new Virus(this.x, this.y)
+				arena.add(clone)
 				const x = this.x - cell.x, y = this.y - cell.y
 				const d = min(1000, 20 / sqrt(x * x + y * y))
-				double.dx = x * d
-				double.dy = y * d
+				clone.dx = x * d
+				clone.dy = y * d
 			}
 		}
 	}

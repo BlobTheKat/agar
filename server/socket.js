@@ -5,10 +5,11 @@ import { PlayerCell } from "./cells/player.js"
 import { colors, packet, dec, enc } from "./util.js"
 const specname = Uint8Array.of(83, 112, 101, 99, 116, 97, 116, 111, 114) // "Spectator"
 export const players = new Map
-let speedexponent = 0, speed = 0
+let speedExponent = 0, speed = 0
 let loss = 0, ejectspeed = 0, ejectrand = 0
 config(() => {
-	({speedexponent, speed} = CONFIG.player)
+	speedExponent = CONFIG.player.speedexponent
+	speed = CONFIG.player.speed
 	loss = CONFIG.eject.mass / CONFIG.eject.efficiency
 	ejectspeed = CONFIG.eject.speed
 	ejectrand = CONFIG.eject.randomthrow
@@ -100,7 +101,7 @@ export class PlayerSocket{
 			if(cell.age <= 20) continue
 			let dx = (x - cell.x) * this.z / 4
 			let dy = (y - cell.y) * this.z / 4
-			const d = sqrt(dx * dx + dy * dy) / (cell.m ** -speedexponent * speed)
+			const d = sqrt(dx * dx + dy * dy) / (cell.m ** -speedExponent * speed)
 			if(d > 1)dx /= d, dy /= d
 			const smoothness = cell.age < 30 ? 15 : 5
 			cell.dx += (dx - cell.dx) / smoothness
@@ -149,7 +150,7 @@ export class PlayerSocket{
 			}
 		}else this.arena.botCount--, idlebots.push(this)
 	}
-	newcell(x, y, m){
+	newCell(x, y, m){
 		if(this.cells.length >= CONFIG.player.maxcells) return null
 		const c = new PlayerCell(x, y, this)
 		c.m = m
@@ -163,20 +164,20 @@ export class PlayerSocket{
 		let t = this.cells.length
 		const minmass = CONFIG.player.minmass * 2
 		for(const cell of this.cells){
-			if(cell.m < minmass)continue
-			const double = this.newcell(cell.x, cell.y, cell.m / 2)
-			if(!double)break
+			if(cell.m < minmass) continue
+			const double = this.newCell(cell.x, cell.y, cell.m / 2)
+			if(!double) break
 			cell.m /= 2
 			const fac = min(1000, 50 / sqrt(cell.dx * cell.dx + cell.dy * cell.dy))
 			double.dx = cell.dx * fac
 			double.dy = cell.dy * fac
-			if(!--t)break
+			if(!--t) break
 		}
 	}
 	eject(){
 		if(this.arena.ejectedCount >= CONFIG.eject.max) return
 		for(const cell of this.cells){
-			if(cell.m < CONFIG.player.minmass + loss)continue
+			if(cell.m < CONFIG.player.minmass + loss) continue
 			const fac = sqrt(cell.dx * cell.dx + cell.dy * cell.dy) || 1
 			const blob = new EjectedMass(cell.x + cell.dx * cell.r / fac, cell.y + cell.dy * cell.r / fac, CONFIG.eject.mass, cell.kind)
 			cell.m -= loss
@@ -195,5 +196,5 @@ export class PlayerSocket{
 	}
 	get textName(){ return dec.decode(this.name) }
 	set textName(a){ this.name = enc.encode(a); this.shortName = a.replace(/\W/g,"").toLowerCase() || 'unnamed' }
-	get ip(){return this.ws._socket.remoteAddress}
+	get ip(){ return this.ws._socket.remoteAddress }
 }

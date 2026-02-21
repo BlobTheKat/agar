@@ -1,7 +1,10 @@
 import { Cell } from "../cell.js"
 
 let solid = 0, cooldown = 0
-config(() => ({solid, cooldown} = CONFIG.eject))
+config(() => {
+	solid = CONFIG.eject.solid
+	cooldown = CONFIG.eject.cooldown
+})
 export class EjectedMass extends Cell{
 	age = 0
 	added(arena){

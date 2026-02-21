@@ -4,27 +4,31 @@ import { Food } from "./food.js"
 import { MotherVirus } from "./mothervirus.js"
 import { PlayerCell } from "./player.js"
 
-let foodmass = 0, minmass = 0, maxmass = 0, foodspawn = 0, efficiency = 0, maxfood = 0, take = 0
+let foodMass = 0, minMass = 0, maxMass = 0, foodSpawn = 0, efficiency = 0, maxFood = 0, take = 0
 config(() => {
-	maxfood = CONFIG.food.max * arenaSize
-	;({foodmass, minmass, maxmass, foodspawn, efficiency} = CONFIG.mothervirus)
-	take = foodmass / efficiency
-	minmass *= 2
+	maxFood = CONFIG.food.max * arenaSize
+	foodMass = CONFIG.mothervirus.foodmass
+	minMass = CONFIG.mothervirus.minmass
+	maxMass = CONFIG.mothervirus.maxmass
+	foodSpawn = CONFIG.mothervirus.foodspawn
+	efficiency = CONFIG.mothervirus.efficiency
+	take = foodMass / efficiency
+	minMass *= 2
 })
 export class AttractorCell extends Cell{
-	constructor(x, y){ super(x, y, minmass, 0xe000) }
+	constructor(x, y){ super(x, y, minMass, 0xe000) }
 	added(arena){ arena.attractorCount++ }
 	removed(arena){ arena.attractorCount-- }
 	tick(arena){
 		const sqrtr = sqrt(this.r)
-		if(this.m > maxmass*4) this.m = maxmass*4
-		else if(this.m - take >= minmass) for(let i = foodspawn * this.r * .01; i > 0; i--){
-			if(this.m - take < minmass) break
+		if(this.m > maxMass*4) this.m = maxMass*4
+		else if(this.m - take >= minMass) for(let i = foodSpawn * this.r * .01; i > 0; i--){
+			if(this.m - take < minMass) break
 			const th = random() * PI * 2
 			const x = sin(th), y = cos(th)
 			this.m -= take
-			if(arena.foodCount >= maxfood) continue
-			const c = new Food(this.x + x * this.r, this.y + y * this.r, foodmass)
+			if(arena.foodCount >= maxFood) continue
+			const c = new Food(this.x + x * this.r, this.y + y * this.r, foodMass)
 			c.dx = (x-y) * sqrtr
 			c.dy = (y+x) * sqrtr
 			arena.add(c)
@@ -35,10 +39,10 @@ export class AttractorCell extends Cell{
 			if(cell instanceof AttractorCell) return
 			let dx = cell.x - this.x, dy = cell.y - this.y, d2 = dx*dx+dy*dy, d = sqrt(d2)
 			if(cell instanceof PlayerCell && cell.m >= minsuckmass && d < this.r*.6667+cell.r){
-				const nm = cell.m - foodspawn * foodmass * 4
-				if(nm < CONFIG.player.minmass) return
+				const nm = cell.m - foodSpawn * foodMass * 4
+				if(nm < CONFIG.player.minMass) return
 				cell.m = nm
-				this.m += foodspawn * foodmass * 2
+				this.m += foodSpawn * foodMass * 2
 			}
 			if(!(cell instanceof MotherVirus)){
 				const odx = dx; dx += dy; dy -= odx
